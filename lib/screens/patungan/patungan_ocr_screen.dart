@@ -274,36 +274,39 @@ class _PatunganOcrScreenState extends State<PatunganOcrScreen> with SingleTicker
                         ),
 
                         // Garis Laser Scanning Animasi
-                        AnimatedBuilder(
-                          animation: _scanAnimation,
-                          builder: (context, child) {
-                            return Positioned(
-                              top: boxHeight * _scanAnimation.value,
-                              left: boxWidth * 0.05,
-                              right: boxWidth * 0.05,
-                              child: Container(
-                                height: 3,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(3),
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Colors.transparent,
-                                      Color(0xFF00FFCC),
-                                      Color(0xFF00BFA5),
-                                      Colors.transparent,
+                        Positioned(
+                          top: 0,
+                          left: boxWidth * 0.05,
+                          right: boxWidth * 0.05,
+                          child: AnimatedBuilder(
+                            animation: _scanAnimation,
+                            builder: (context, child) {
+                              return Transform.translate(
+                                offset: Offset(0, boxHeight * _scanAnimation.value),
+                                child: Container(
+                                  height: 3,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(3),
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Colors.transparent,
+                                        Color(0xFF00FFCC),
+                                        Color(0xFF00BFA5),
+                                        Colors.transparent,
+                                      ],
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFF00E5FF).withOpacity(0.8),
+                                        blurRadius: 12,
+                                        spreadRadius: 2,
+                                      ),
                                     ],
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF00E5FF).withOpacity(0.8),
-                                      blurRadius: 12,
-                                      spreadRadius: 2,
-                                    ),
-                                  ],
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
                       ],
                     );

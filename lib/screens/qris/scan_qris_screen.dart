@@ -1120,30 +1120,33 @@ class _ScanQrisScreenState extends State<ScanQrisScreen> with SingleTickerProvid
                   Positioned(bottom: 8, right: 8, child: _buildReticleCorner(isTop: false, isLeft: false)),
 
                   // Garis Laser Scanning Animasi Bergerak
-                  AnimatedBuilder(
-                    animation: _laserController,
-                    builder: (context, child) {
-                      return Positioned(
-                        top: 20 + (_laserController.value * 230),
-                        left: 20,
-                        right: 20,
-                        child: Container(
-                          height: 3,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Colors.transparent, Color(0xFF69F0AE), Colors.transparent],
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF69F0AE).withOpacity(0.9),
-                                blurRadius: 10,
-                                spreadRadius: 1,
+                  Positioned(
+                    top: 0,
+                    left: 20,
+                    right: 20,
+                    child: AnimatedBuilder(
+                      animation: _laserController,
+                      builder: (context, child) {
+                        return Transform.translate(
+                          offset: Offset(0, 20 + (_laserController.value * 230)),
+                          child: Container(
+                            height: 3,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Colors.transparent, Color(0xFF69F0AE), Colors.transparent],
                               ),
-                            ],
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFF69F0AE).withOpacity(0.9),
+                                  blurRadius: 10,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),

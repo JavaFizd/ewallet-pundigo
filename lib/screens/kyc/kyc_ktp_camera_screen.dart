@@ -297,30 +297,33 @@ class _KycKtpCameraScreenState extends State<KycKtpCameraScreen> with SingleTick
                     ),
 
                     // Garis Laser Scanning Animasi Bergerak
-                    AnimatedBuilder(
-                      animation: _scanController,
-                      builder: (context, child) {
-                        return Positioned(
-                          top: 15 + (_scanController.value * 165),
-                          left: 15,
-                          right: 15,
-                          child: Container(
-                            height: 2.5,
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Colors.transparent, Color(0xFF69F0AE), Colors.transparent],
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF69F0AE).withOpacity(0.8),
-                                  blurRadius: 8,
-                                  spreadRadius: 1,
+                    Positioned(
+                      top: 0,
+                      left: 15,
+                      right: 15,
+                      child: AnimatedBuilder(
+                        animation: _scanController,
+                        builder: (context, child) {
+                          return Transform.translate(
+                            offset: Offset(0, 15 + (_scanController.value * 165)),
+                            child: Container(
+                              height: 2.5,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Colors.transparent, Color(0xFF69F0AE), Colors.transparent],
                                 ),
-                              ],
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF69F0AE).withOpacity(0.8),
+                                    blurRadius: 8,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
