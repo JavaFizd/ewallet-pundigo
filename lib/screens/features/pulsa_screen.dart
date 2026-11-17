@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../data/app_state.dart';
+import '../../widgets/common/app_button.dart';
+import '../transactions/transaction_receipt_screen.dart';
 
 /// ============================================================================
 /// HALAMAN TOP UP PULSA & PAKET DATA
@@ -87,23 +89,22 @@ class _PulsaScreenState extends State<PulsaScreen> with SingleTickerProviderStat
   void _processPayment() {
     final phone = _phoneController.text.trim();
     if (phone.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Masukkan nomor handphone tujuan'),
-          backgroundColor: AppColors.danger,
-        ),
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) => _buildNoticeSheet('Nomor Handphone Tidak Valid', 'Harap masukkan nomor handphone tujuan dengan benar.'),
       );
       return;
     }
 
     final appState = AppState.instance;
     if (appState.user.saldoUtama < _selectedAmount) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Saldo tidak cukup. Saldo aktif: ${CurrencyFormatter.format(appState.user.saldoUtama)}',
-          ),
-          backgroundColor: AppColors.danger,
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) => _buildNoticeSheet(
+          'Saldo Utama Tidak Mencukupi',
+          'Saldo aktif kamu saat ini ${CurrencyFormatter.format(appState.user.saldoUtama)}, tidak mencukupi untuk membeli $_selectedPackageName seharga ${CurrencyFormatter.format(_selectedAmount)}.',
         ),
       );
       return;
@@ -111,7 +112,7 @@ class _PulsaScreenState extends State<PulsaScreen> with SingleTickerProviderStat
 
     setState(() => _isLoading = true);
 
-    Future.delayed(const Duration(milliseconds: 600), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       if (!mounted) return;
       setState(() => _isLoading = false);
 
@@ -121,8 +122,78 @@ class _PulsaScreenState extends State<PulsaScreen> with SingleTickerProviderStat
         packageName: _selectedPackageName,
       );
 
-      _showSuccessDialog();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => TransactionReceiptScreen(
+            receiptType: ReceiptType.pulsa,
+            title: 'Pembelian Pulsa',
+            amount: _selectedAmount,
+            isIncome: false,
+            accountOrPhone: phone,
+            methodOrProvider: 'Telkomsel Prabayar',
+            packageName: _selectedPackageName,
+            serialNumber: 'SN-TSEL-${DateTime.now().millisecondsSinceEpoch}',
+          ),
+        ),
+      );
     });
+  }
+
+  Widget _buildNoticeSheet(String title, String message) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 44,
+            height: 4,
+            decoration: BoxDecoration(
+              color: const Color(0xFFCBD5E1),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            width: 56,
+            height: 56,
+            decoration: const BoxDecoration(
+              color: Color(0xFFFEF2F2),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.warning_amber_rounded, color: Color(0xFFEF4444), size: 30),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            title,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              color: const Color(0xFF64748B),
+              height: 1.45,
+            ),
+          ),
+          const SizedBox(height: 20),
+          AppButton(
+            text: 'Tutup',
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showSuccessDialog() {

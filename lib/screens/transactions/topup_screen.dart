@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../data/app_state.dart';
+import '../../widgets/common/app_button.dart';
 import '../../widgets/common/plus_upgrade_dialog.dart';
 import 'topup_success_screen.dart';
+import 'transaction_receipt_screen.dart';
 
 /// ============================================================================
 /// HALAMAN PUSAT LAYANAN TOP UP PUNDIGO
@@ -87,6 +89,73 @@ class _TopupScreenState extends State<TopupScreen> with SingleTickerProviderStat
     if (mounted) setState(() {});
   }
 
+  void _showInsufficientBalanceModal(double requiredAmount) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 44,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                width: 58,
+                height: 58,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFEF2F2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.account_balance_wallet_outlined, color: Color(0xFFEF4444), size: 30),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                'Saldo Utama Tidak Mencukupi',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xFF0F172A),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Saldo aktif kamu saat ini ${CurrencyFormatter.format(_appState.user.saldoUtama)}, tidak mencukupi untuk transaksi ${CurrencyFormatter.format(requiredAmount)}. Harap lakukan isi saldo terlebih dahulu.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13,
+                  color: const Color(0xFF64748B),
+                  height: 1.45,
+                ),
+              ),
+              const SizedBox(height: 24),
+              AppButton(
+                text: 'Isi Saldo Sekarang',
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  _tabController.animateTo(0);
+                },
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     _appState.removeListener(_onStateChange);
@@ -135,42 +204,90 @@ class _TopupScreenState extends State<TopupScreen> with SingleTickerProviderStat
       body: SafeArea(
         child: Column(
           children: [
-            // TAB SELECTOR KATEGORI TOP UP
+            // =========================================================
+            // TAB SELECTOR KATEGORI TOP UP (SESUAI DENGAN TRANSFER)
+            // =========================================================
             Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 6),
-              height: 46,
+              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              height: 52,
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: const Color(0xFFE2E8F0),
+                color: const Color(0xFFF1F5F9), // Slate-100 bersih dan rapi
                 borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
               ),
               child: TabBar(
                 controller: _tabController,
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                padding: EdgeInsets.zero,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 2),
                 indicator: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
+                      color: const Color(0xFF0F172A).withOpacity(0.08),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                labelColor: const Color(0xFF0F172A),
+                labelColor: const Color(0xFF007A63), // PundiGo Emerald Teal
                 labelStyle: GoogleFonts.plusJakartaSans(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.2,
                 ),
-                unselectedLabelColor: const Color(0xFF64748B),
+                unselectedLabelColor: const Color(0xFF475569), // Slate-600 tegas & jelas terbaca
                 unselectedLabelStyle: GoogleFonts.plusJakartaSans(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.2,
                 ),
-                tabs: const [
-                  Tab(text: '🏪 Indomaret'),
-                  Tab(text: '📱 Pulsa & Data'),
-                  Tab(text: '⚡ Listrik PLN'),
+                tabs: [
+                  Tab(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.storefront_rounded, size: 18),
+                          SizedBox(width: 6),
+                          Text('Indomaret'),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Tab(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.phone_android_rounded, size: 18),
+                          SizedBox(width: 6),
+                          Text('Pulsa & Data'),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Tab(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.bolt_rounded, size: 18),
+                          SizedBox(width: 6),
+                          Text('Listrik PLN'),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -514,7 +631,13 @@ class _TopupScreenState extends State<TopupScreen> with SingleTickerProviderStat
                   _appState.topUpSaldo(_selectedIndomaretNominal, method: 'Indomaret');
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (_) => TopupSuccessScreen(amount: _selectedIndomaretNominal),
+                      builder: (_) => TransactionReceiptScreen(
+                        receiptType: ReceiptType.topup,
+                        title: 'Top Up',
+                        amount: _selectedIndomaretNominal,
+                        isIncome: true,
+                        methodOrProvider: 'Tunai Kasir Indomaret',
+                      ),
                     ),
                   );
                 },
@@ -733,27 +856,29 @@ class _TopupScreenState extends State<TopupScreen> with SingleTickerProviderStat
               child: ElevatedButton(
                 onPressed: () {
                   if (_appState.user.saldoUtama < _selectedPulsaAmount) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Saldo tidak mencukupi (${CurrencyFormatter.format(_appState.user.saldoUtama)}). Lakukan Top Up saldo terlebih dahulu.',
-                        ),
-                        backgroundColor: const Color(0xFFEF4444),
-                      ),
-                    );
+                    _showInsufficientBalanceModal(_selectedPulsaAmount);
                     return;
                   }
 
+                  final targetPhone = _phoneController.text.trim().isEmpty ? _appState.user.phone : _phoneController.text.trim();
                   _appState.beliPulsa(
                     amount: _selectedPulsaAmount,
-                    phone: _phoneController.text,
+                    phone: targetPhone,
                     packageName: _selectedPulsaTitle,
                   );
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Pembelian $_selectedPulsaTitle Berhasil!'),
-                      backgroundColor: const Color(0xFF00A887),
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (_) => TransactionReceiptScreen(
+                        receiptType: ReceiptType.pulsa,
+                        title: 'Pembelian Pulsa',
+                        amount: _selectedPulsaAmount,
+                        isIncome: false,
+                        accountOrPhone: targetPhone,
+                        methodOrProvider: 'Telkomsel Prabayar',
+                        packageName: _selectedPulsaTitle,
+                        serialNumber: 'SN-TSEL-${DateTime.now().millisecondsSinceEpoch}',
+                      ),
                     ),
                   );
                 },
@@ -1046,28 +1171,30 @@ class _TopupScreenState extends State<TopupScreen> with SingleTickerProviderStat
               child: ElevatedButton(
                 onPressed: () {
                   if (_appState.user.saldoUtama < _selectedPlnAmount) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Saldo tidak mencukupi (${CurrencyFormatter.format(_appState.user.saldoUtama)}). Lakukan Top Up saldo terlebih dahulu.',
-                        ),
-                        backgroundColor: const Color(0xFFEF4444),
-                      ),
-                    );
+                    _showInsufficientBalanceModal(_selectedPlnAmount);
                     return;
                   }
 
                   const generatedToken = '2910 - 8491 - 0482 - 7719 - 8820';
+                  final targetMeter = _meterController.text.trim().isEmpty ? '142981048821' : _meterController.text.trim();
                   _appState.bayarTokenListrik(
                     amount: _selectedPlnAmount,
-                    idPelanggan: _meterController.text,
+                    idPelanggan: targetMeter,
                     tokenCode: generatedToken,
                   );
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Pembelian Token PLN Sukses! Stroom: 2910-8491-0482-7719-8820'),
-                      backgroundColor: Color(0xFF00A887),
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (_) => TransactionReceiptScreen(
+                        receiptType: ReceiptType.pln,
+                        title: 'Token Listrik PLN',
+                        amount: _selectedPlnAmount,
+                        isIncome: false,
+                        accountOrPhone: targetMeter,
+                        recipientOrDestination: _appState.user.name,
+                        methodOrProvider: 'R1M / 900 VA',
+                        tokenCode: generatedToken,
+                      ),
                     ),
                   );
                 },

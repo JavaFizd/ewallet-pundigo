@@ -27,7 +27,7 @@ class SmartFeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
@@ -46,13 +46,13 @@ class SmartFeatureCard extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(18),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 16, 12),
+            padding: const EdgeInsets.fromLTRB(14, 10, 16, 10),
             child: Row(
               children: [
                 // Visual Ilustrasi Resmi Figma (Dioptimasi cacheWidth untuk 60fps smooth scroll)
                 SizedBox(
-                  width: 120,
-                  height: 80,
+                  width: 110,
+                  height: 74,
                   child: Image.asset(
                     imageAsset,
                     fit: BoxFit.contain,

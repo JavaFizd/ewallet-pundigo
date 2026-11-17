@@ -3,10 +3,12 @@ import '../../core/constants/app_colors.dart';
 import '../../data/app_state.dart';
 import '../../widgets/common/custom_app_bar.dart';
 import '../../widgets/common/user_avatar.dart';
-import '../auth/plus_offer_screen.dart';
+import '../auth/login_screen.dart';
+import '../kyc/kyc_ktp_guide_screen.dart';
 import '../auth/register_screen.dart';
 import 'edit_profile_screen.dart';
 import 'help_center_screen.dart';
+import 'change_pin_screen.dart';
 
 /// ============================================================================
 /// HALAMAN PROFIL DAN PENGATURAN
@@ -70,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: () {
                 Navigator.of(ctx).pop();
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
                   (route) => false,
                 );
               },
@@ -274,61 +276,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: AppColors.border.withOpacity(0.6)),
               ),
-              child: Column(
-                children: [
-                  _buildMenuItem(
-                    icon: Icons.person_outline_rounded,
-                    iconBg: const Color(0xFFE6F8F5),
-                    iconColor: const Color(0xFF00A887),
-                    title: 'Informasi Akun',
-                    trailingText: 'Ubah Data',
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-                      );
-                    },
-                  ),
-                  const Divider(color: AppColors.border, height: 1, indent: 64),
-                  _buildMenuItem(
-                    icon: Icons.lock_outline_rounded,
-                    iconBg: const Color(0xFFE6F8F5),
-                    iconColor: const Color(0xFF00A887),
-                    title: 'Ganti PIN Akun',
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Menu Ganti PIN Akun dibuka.')),
-                      );
-                    },
-                  ),
-                  const Divider(color: AppColors.border, height: 1, indent: 64),
-                  _buildMenuItem(
-                    icon: Icons.chat_bubble_outline_rounded,
-                    iconBg: const Color(0xFFE6F8F5),
-                    iconColor: const Color(0xFF00A887),
-                    title: 'Pusat Bantuan & FAQ',
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const HelpCenterScreen()),
-                      );
-                    },
-                  ),
-                  const Divider(color: AppColors.border, height: 1, indent: 64),
-                  _buildMenuItem(
-                    icon: Icons.info_outline_rounded,
-                    iconBg: const Color(0xFFF1F5F9),
-                    iconColor: AppColors.textSecondary,
-                    title: 'Tentang Aplikasi',
-                    trailingText: 'v1.0',
-                    onTap: () {
-                      showAboutDialog(
-                        context: context,
-                        applicationName: 'PundiGo!',
-                        applicationVersion: '1.0.0',
-                        applicationLegalese: '© 2026 PundiGo Fintech Indonesia',
-                      );
-                    },
-                  ),
-                ],
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Column(
+                  children: [
+                    _buildMenuItem(
+                      icon: Icons.lock_outline_rounded,
+                      iconBg: const Color(0xFFE6F8F5),
+                      iconColor: const Color(0xFF00A887),
+                      title: 'Ganti PIN Akun',
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const ChangePinScreen()),
+                        );
+                      },
+                    ),
+                    const Divider(color: AppColors.border, height: 1, indent: 64),
+                    _buildMenuItem(
+                      icon: Icons.chat_bubble_outline_rounded,
+                      iconBg: const Color(0xFFE6F8F5),
+                      iconColor: const Color(0xFF00A887),
+                      title: 'Pusat Bantuan',
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const HelpCenterScreen()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -461,7 +437,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const PlusOfferScreen()),
+                          MaterialPageRoute(builder: (_) => const KycKtpGuideScreen()),
                         );
                       },
                       style: ElevatedButton.styleFrom(

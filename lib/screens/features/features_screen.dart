@@ -6,6 +6,7 @@ import '../../widgets/common/plus_upgrade_dialog.dart';
 import '../../widgets/home/promo_banner.dart';
 import '../../widgets/home/quick_actions.dart';
 import '../../widgets/home/smart_feature_card.dart';
+import '../kyc/kyc_ktp_guide_screen.dart';
 import '../transactions/patungan_pintar_screen.dart';
 import '../transactions/request_balance_screen.dart';
 import '../transactions/saku_kelompok_screen.dart';
@@ -80,7 +81,9 @@ class FeaturesScreen extends StatelessWidget {
             QuickActionsCard(
               onTransferTap: () {
                 if (!AppState.instance.user.isPlus) {
-                  PlusUpgradeDialog.show(context, featureName: 'Transfer ke Bank & E-Wallet');
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const KycKtpGuideScreen()),
+                  );
                   return;
                 }
                 Navigator.of(context).push(
@@ -94,13 +97,9 @@ class FeaturesScreen extends StatelessWidget {
               },
               onRequestTap: () {
                 if (!AppState.instance.user.isPlus) {
-                  PlusUpgradeDialog.show(context, featureName: 'Minta Saldo').then((upgraded) {
-                    if (upgraded == true && context.mounted) {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const RequestBalanceScreen()),
-                      );
-                    }
-                  });
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const KycKtpGuideScreen()),
+                  );
                   return;
                 }
                 Navigator.of(context).push(
@@ -274,6 +273,12 @@ class FeaturesScreen extends StatelessWidget {
               actionText: 'Mulai patungan',
               imageAsset: 'assets/images/patungan_illustration.png',
               onTap: () {
+                if (!AppState.instance.user.isPlus) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const KycKtpGuideScreen()),
+                  );
+                  return;
+                }
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const PatunganPintarScreen()),
                 );
@@ -286,6 +291,12 @@ class FeaturesScreen extends StatelessWidget {
               actionText: 'Buka Saku',
               imageAsset: 'assets/images/saku_illustration.png',
               onTap: () {
+                if (!AppState.instance.user.isPlus) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const KycKtpGuideScreen()),
+                  );
+                  return;
+                }
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const SakuKelompokScreen()),
                 );
@@ -304,18 +315,12 @@ class FeaturesScreen extends StatelessWidget {
                     ),
                   );
                 } else {
-                  PlusUpgradeDialog.show(
-                    context,
-                    featureName: 'Gratis Transfer ke Semua Bank',
-                  ).then((upgraded) {
-                    if (upgraded == true && context.mounted) {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const TransferScreen(initialTabIndex: 1),
-                        ),
-                      );
-                    }
-                  });
+                  // Belum upgrade: langsung masuk ke pengisian KTP & Wajah dulu!
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const KycKtpGuideScreen(),
+                    ),
+                  );
                 }
               },
             ),

@@ -21,6 +21,7 @@ class AppState extends ChangeNotifier {
 
   UserModel _user = DummyData.currentUser;
   bool _isBalanceVisible = true;
+  bool _isNewAccount = false;
   final List<TransactionModel> _transactions = List.from(DummyData.initialTransactions);
   KasKelompokModel _kasKelompok = DummyData.defaultKas;
   final List<KasMutasiModel> _kasMutasi = [
@@ -31,7 +32,7 @@ class AppState extends ChangeNotifier {
       isIncome: false,
       date: DateTime.now().subtract(const Duration(days: 1)),
       hasReceipt: true,
-      uploader: 'Dinda (Bendahara)',
+      uploader: 'Taufiq (Bendahara)',
     ),
     KasMutasiModel(
       title: 'Iuran Kas: Rahmat Hidayat',
@@ -56,6 +57,7 @@ class AppState extends ChangeNotifier {
   // Getters
   UserModel get user => _user;
   bool get isBalanceVisible => _isBalanceVisible;
+  bool get isNewAccount => _isNewAccount;
   List<TransactionModel> get transactions => List.unmodifiable(_transactions);
   KasKelompokModel get kasKelompok => _kasKelompok;
   List<KasMutasiModel> get kasMutasi => List.unmodifiable(_kasMutasi);
@@ -75,12 +77,12 @@ class AppState extends ChangeNotifier {
     required String pin,
     String? photoUrl,
   }) {
-    final cleanName = name.trim().isEmpty ? 'Dinda Syahfitri' : name.trim();
+    final cleanName = name.trim().isEmpty ? 'Taufiq' : name.trim();
     final initials = UserModel.computeInitials(cleanName);
 
     String formattedPhone = phone.trim();
     if (formattedPhone.isEmpty) {
-      formattedPhone = '+62 825-0180-0288';
+      formattedPhone = '+62 812-3456-789';
     } else if (!formattedPhone.startsWith('+62')) {
       if (formattedPhone.startsWith('0')) {
         formattedPhone = '+62 ${formattedPhone.substring(1)}';
@@ -95,16 +97,24 @@ class AppState extends ChangeNotifier {
       id: 'user_${DateTime.now().millisecondsSinceEpoch}',
       name: cleanName,
       phone: formattedPhone,
-      email: email.trim().isEmpty ? 'alhamdulillah.dinda@gmail.com' : email.trim(),
+      email: email.trim().isEmpty ? 'dinda.syahfitri@gmail.com' : email.trim(),
       initials: initials,
       photoUrl: photoUrl,
       accountType: 'Akun Basic',
       saldoUtama: 0,
       saldoDompet: 0,
-      pin: pin.isNotEmpty ? pin : '170845',
+      pin: pin.isNotEmpty ? pin : '171717',
     );
+    _isNewAccount = true;
     _transactions.clear();
-    _kasKelompok = DummyData.defaultKas.copyWith(collectedAmount: 0);
+    _kasKelompok = KasKelompokModel(
+      id: 'kas_empty',
+      title: 'Belum Ada Kas',
+      memberCount: 0,
+      collectedAmount: 0,
+      targetAmount: 0,
+    );
+    _kasMutasi.clear();
     _isBalanceVisible = true;
     notifyListeners();
   }
@@ -130,6 +140,63 @@ class AppState extends ChangeNotifier {
   // Upgrade akun ke PundiGo! Plus
   void upgradeToPlus() {
     _user = _user.copyWith(accountType: 'Akun Plus');
+    notifyListeners();
+  }
+
+  // Masuk sebagai pengguna lama (Sudah terdaftar: topikpanas@gmail.com / 08123456789 / PIN 171717)
+  void loginExistingUser({String? identifier}) {
+    _isNewAccount = false;
+    _user = _user.copyWith(
+      name: 'Taufiq',
+      initials: 'TF',
+      phone: '08123456789',
+      email: 'topikpanas@gmail.com',
+      pin: _user.pin.isEmpty || _user.pin == '170845' ? '171717' : _user.pin,
+      accountType: 'Akun Plus',
+      saldoUtama: 100000,
+      saldoDompet: 50000,
+    );
+    if (_transactions.isEmpty) {
+      _transactions.addAll(DummyData.initialTransactions);
+    }
+    _kasKelompok = DummyData.defaultKas;
+    if (_kasMutasi.isEmpty) {
+      _kasMutasi.addAll([
+        KasMutasiModel(
+          title: 'Beli ATK & Print Makalah',
+          subtitle: 'Nota No. 0429 • Fotokopi Kampus',
+          amount: 35000,
+          isIncome: false,
+          date: DateTime.now().subtract(const Duration(days: 1)),
+          hasReceipt: true,
+          uploader: 'Taufiq (Bendahara)',
+        ),
+        KasMutasiModel(
+          title: 'Iuran Kas: Rahmat Hidayat',
+          subtitle: 'Transfer via PundiGo!',
+          amount: 25000,
+          isIncome: true,
+          date: DateTime.now().subtract(const Duration(days: 2)),
+          hasReceipt: false,
+          uploader: 'Rahmat Hidayat',
+        ),
+        KasMutasiModel(
+          title: 'Iuran Kas: Maya Lestari',
+          subtitle: 'Transfer via Bank Aceh',
+          amount: 25000,
+          isIncome: true,
+          date: DateTime.now().subtract(const Duration(days: 3)),
+          hasReceipt: false,
+          uploader: 'Maya Lestari',
+        ),
+      ]);
+    }
+    notifyListeners();
+  }
+
+  // Update PIN keamanan akun 6-digit
+  void updatePin(String newPin) {
+    _user = _user.copyWith(pin: newPin);
     notifyListeners();
   }
 
@@ -183,7 +250,7 @@ class AppState extends ChangeNotifier {
   }
 
   // Menambah iuran kas kelompok
-  bool setorKas(double amount, {String uploader = 'Dinda Syahfitri'}) {
+  bool setorKas(double amount, {String uploader = 'Taufiq'}) {
     if (_user.saldoUtama >= amount) {
       _user = _user.copyWith(saldoUtama: _user.saldoUtama - amount);
       _kasKelompok = KasKelompokModel(
@@ -211,6 +278,30 @@ class AppState extends ChangeNotifier {
     return false;
   }
 
+  // Menerima iuran kas dari anggota via tautan / QRIS / transfer
+  void addKasContribution(double amount, {String uploader = 'Anggota (via Tautan)'}) {
+    _kasKelompok = KasKelompokModel(
+      id: _kasKelompok.id,
+      title: _kasKelompok.title,
+      memberCount: _kasKelompok.memberCount,
+      collectedAmount: _kasKelompok.collectedAmount + amount,
+      targetAmount: _kasKelompok.targetAmount,
+    );
+    _kasMutasi.insert(
+      0,
+      KasMutasiModel(
+        title: 'Iuran Kas: $uploader',
+        subtitle: 'Setoran via Tautan Kas • Dikonfirmasi',
+        amount: amount,
+        isIncome: true,
+        date: DateTime.now(),
+        hasReceipt: true,
+        uploader: uploader,
+      ),
+    );
+    notifyListeners();
+  }
+
   // Mencatat pengeluaran kas kelompok oleh bendahara dengan bukti nota
   bool catatPengeluaranKas({
     required String title,
@@ -235,13 +326,67 @@ class AppState extends ChangeNotifier {
           isIncome: false,
           date: DateTime.now(),
           hasReceipt: hasReceipt,
-          uploader: 'Dinda (Bendahara)',
+          uploader: 'Taufiq (Bendahara)',
         ),
       );
       notifyListeners();
       return true;
     }
     return false;
+  }
+
+  // Integrasi Patungan Pintar Otomatis ke Saku Kas Kelompok
+  void executePatunganKeKas({
+    required double totalAmount,
+    required double personalAmount,
+    required String placeName,
+    required String kasTitle,
+  }) {
+    // 1. Potong saldo personal Dinda Rp 25.000 jika cukup
+    if (_user.saldoUtama >= personalAmount) {
+      _user = _user.copyWith(saldoUtama: _user.saldoUtama - personalAmount);
+    }
+
+    // 2. Tambah kas kelompok 3 RPL menjadi Rp 350.000 (sesuai spesifikasi)
+    _kasKelompok = KasKelompokModel(
+      id: 'kas_rpl_03',
+      title: 'Kas Kelompok 3 RPL',
+      memberCount: 4,
+      collectedAmount: 350000,
+      targetAmount: 500000,
+    );
+
+    // 3. Catat di riwayat transaksi personal Dinda
+    _transactions.insert(
+      0,
+      TransactionModel(
+        id: 'TRX-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}',
+        title: 'Patungan: $placeName',
+        subtitle: 'Auto-debit kas kelompok • Lunas ✓',
+        date: DateTime.now(),
+        amount: personalAmount,
+        isIncome: false,
+        status: 'Sukses',
+        referenceNumber: 'PG-SPLIT-${DateTime.now().millisecondsSinceEpoch}',
+        category: 'Patungan Pintar',
+      ),
+    );
+
+    // 4. Catat mutasi masuk otomatis di buku kas kelompok
+    _kasMutasi.insert(
+      0,
+      KasMutasiModel(
+        title: '+Rp 100.000 dari Patungan Pintar Struk',
+        subtitle: 'Otomatis dari $placeName • 4 Anggota Lunas',
+        amount: totalAmount,
+        isIncome: true,
+        date: DateTime.now(),
+        hasReceipt: true,
+        uploader: 'Taufiq, Naufal, Maya, Rahmat',
+      ),
+    );
+
+    notifyListeners();
   }
 
 
@@ -264,6 +409,34 @@ class AppState extends ChangeNotifier {
         category: 'Tagihan',
       ),
     );
+    notifyListeners();
+    return true;
+  }
+
+  // Pembayaran Transaksi QRIS Resmi
+  bool bayarQris({
+    required double amount,
+    required String merchantName,
+    String? city,
+  }) {
+    if (_user.saldoUtama < amount) return false;
+
+    _user = _user.copyWith(saldoUtama: _user.saldoUtama - amount);
+    _transactions.insert(
+      0,
+      TransactionModel(
+        id: 'TRX-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}',
+        title: 'QRIS: $merchantName',
+        subtitle: '${city ?? 'Indonesia'} • Sukses',
+        date: DateTime.now(),
+        amount: amount,
+        isIncome: false,
+        status: 'Sukses',
+        referenceNumber: 'PG-QRIS-${DateTime.now().millisecondsSinceEpoch}',
+        category: 'QRIS',
+      ),
+    );
+
     notifyListeners();
     return true;
   }

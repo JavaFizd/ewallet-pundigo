@@ -1,17 +1,81 @@
-# pundigo
+# PundiGo! 💳✨
+> **Dompet Digital Mahasiswa & Solusi Finansial Komunitas Kampus**
 
-A new Flutter project.
+PundiGo! adalah aplikasi dompet digital berbasis Flutter yang dirancang khusus untuk memecahkan masalah finansial nyata mahasiswa: transparansi kas kelompok (*Saku Kelompok*), pembagian tagihan makan bersama (*Patungan Pintar*), transfer gratis antar-bank, serta sistem verifikasi identitas (KYC) yang aman dan human-friendly.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🚀 Cara Menjalankan Aplikasi (Untuk Anggota Kelompok)
 
-A few resources to get you started if this is your first Flutter project:
+Pastikan Flutter SDK sudah terpasang di komputer Anda. Jalankan perintah berikut di terminal:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```bash
+# 1. Clone repository
+git clone https://github.com/JavaFizd/mobile-pundigo.git
+cd mobile-pundigo
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# 2. Unduh semua dependensi paket
+flutter pub get
+
+# 3. Jalankan aplikasi di browser (Google Chrome)
+flutter run -d chrome
+```
+
+> **Tips:** Jika ingin menjalankan di emulator Android / HP fisik, cukup jalankan:
+> ```bash
+> flutter run
+> ```
+
+---
+
+## 👥 Akun Demo & Persona Pengujian
+
+Aplikasi ini dilengkapi 2 persona pengujian untuk simulasi alur UX:
+
+### 1. Akun Pengguna Baru (Dinda Syahfitri)
+* **Karakteristik:** Akun baru terdaftar (Basic). Saldo awal Rp 0, riwayat aktivitas bersih, dan kas/patungan belum aktif.
+* **Alur Pengujian:**
+  * Saat mencoba melakukan **Transfer**, **Patungan Pintar**, atau **Saku Kelompok**, sistem mewajibkan verifikasi identitas (**KYC KTP & Wajah**).
+  * Di menu **Minta Saldo**, belum ada kontak teman tersimpan (bisa input nomor HP manual).
+  * Setelah verifikasi KTP & Wajah selesai, akun ter-upgrade ke **Plus** dan kas/patungan mulai dari kondisi bersih (*empty state*).
+
+### 2. Akun Pengguna Lama / Power User (Taufiq)
+* **Email:** `topikpanas@gmail.com`
+* **No. Handphone:** `08123456789`
+* **PIN Keamanan:** `171717`
+* **Karakteristik:** Akun sudah ter-upgrade **PundiGo! Plus**.
+  * Memiliki saldo aktif dan riwayat mutasi transaksi.
+  * Memiliki Saku Kelompok aktif (*KAS KELOMPOK TUGAS UI/UX* dengan 4 anggota).
+  * Memiliki tagihan Patungan Pintar aktif (*Warung Nasi & Mie Aceh*).
+  * Di menu **Minta Saldo**, sudah terisi 5 kontak teman kampus (Dinda Kirana, Naufal Daffa, Rahmat Hidayat, dll.).
+
+---
+
+## 🎨 Import Desain ke Figma (Figma Plugin)
+
+Untuk anggota kelompok yang ingin meninjau atau memodifikasi desain di Figma:
+1. Buka Figma dan buat kanvas baru.
+2. Buka menu **Plugins** ➔ **Development** ➔ **Import plugin from manifest...**.
+3. Pilih file `figma_plugin/manifest.json`.
+4. Jalankan plugin **PundiGo Screen Generator** untuk menghasilkan 16 Frame UI beresolusi tinggi secara otomatis.
+
+---
+
+## 🛠️ Struktur Folder Utama
+
+```
+lib/
+├── core/            # Tema warna, konstanta, format uang, dan utilitas
+├── data/            # State management (AppState) & data lokal (DummyData)
+├── models/          # Model data pengguna, transaksi, kas, dan fitur
+├── screens/
+│   ├── auth/        # Login, Register, OTP, dan Buat/Konfirmasi PIN
+│   ├── home/        # Dashboard utama (Header Saldo, Quick Actions, Promo)
+│   ├── kyc/         # Panduan Foto KTP & Verifikasi Wajah (KYC Guide)
+│   ├── activity/    # Riwayat aktivitas dan mutasi dompet
+│   ├── qris/        # Pindai QRIS & Tampilkan Kode QR Saya
+│   ├── features/    # Menu semua fitur (Pulsa, PLN, Kas, Patungan)
+│   ├── profile/     # Profil akun, ubah data diri, pusat bantuan
+│   └── transactions/# Transfer, Top Up, Minta Saldo, Patungan Pintar, Saku Kas
+└── widgets/         # Komponen reusable (Buttons, App Bar, Cards, Modals)
+```

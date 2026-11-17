@@ -1,16 +1,17 @@
-import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// ============================================================================
-/// BINGKAI SMARTPHONE REALISTIS RESMI PUNDIGO (WEB PROTOTYPE MOCKUP)
+/// BINGKAI KANVAS FIGMA PUNDIGO! (1 LAYAR UTUH TANPA SCROLL - FULL ARTBOARD)
 /// ============================================================================
-/// - Di Web Desktop: Menampilkan mockup smartphone fisik lengkap dengan bezel
-///   halus, kamera punch-hole/speaker, tombol samping, dan bayangan 3D realistis.
-/// - Di Layar Smartphone / Android Native: 100% fullscreen tanpa bingkai tambahan.
+/// - Mode Kanvas Figma (Aktif Default):
+///   Tinggi frame dibuat panjang (1.180px) persis seperti Artboard di Figma.
+///   Menggunakan FittedBox(fit: BoxFit.contain) sehingga SELURUH KONTEN
+///   (Header, Kartu, Promo, hingga Bottom Nav Bar) langsung pas dalam 1 layar
+///   monitor laptop pengguna TANPA PERLU SCROLL sama sekali!
+/// - Tombol toggle di pojok atas untuk berganti ke Mode Ponsel Scroll biasa.
 /// ============================================================================
-class MobileFrame extends StatelessWidget {
+class MobileFrame extends StatefulWidget {
   final Widget child;
 
   const MobileFrame({
@@ -19,175 +20,168 @@ class MobileFrame extends StatelessWidget {
   });
 
   @override
+  State<MobileFrame> createState() => _MobileFrameState();
+}
+
+class _MobileFrameState extends State<MobileFrame> {
+  // Mode Kanvas Figma aktif secara default (Full-height artboard 1 layar pas)
+  bool _isFigmaCanvasMode = true;
+
+  @override
   Widget build(BuildContext context) {
-    // Pada Android Studio (Emulator & HP Fisik Android/iOS): Langsung native murni
     if (!kIsWeb) {
-      return child;
+      return widget.child;
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Jika dibuka dari browser HP (layar kecil < 500px): Langsung fullscreen
-        if (constraints.maxWidth <= 500) {
-          return child;
-        }
-
-        // Tampilan Desktop Web: Tampilkan mockup smartphone fisik yang presisi
-        final double deviceWidth = 412;
-        final double maxHeight = constraints.maxHeight;
-        final double deviceHeight = min(maxHeight - 40, 870);
-
-        return Scaffold(
-          backgroundColor: const Color(0xFF0F172A), // Slate Dark Canvas Elegan
-          body: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Efek Cahaya Latar Belakang (Ambient Fintech Glow)
-              Positioned(
-                top: -100,
-                child: Container(
-                  width: 500,
-                  height: 300,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFF00A887).withOpacity(0.22),
-                        Colors.transparent,
+    if (_isFigmaCanvasMode) {
+      // -----------------------------------------------------------------------
+      // MODE KANVAS FIGMA: 1 LAYAR UTUH PANJANG LENGKAP TANPA PERLU SCROLL
+      // -----------------------------------------------------------------------
+      return Scaffold(
+        backgroundColor: const Color(0xFF0F172A), // Latar gelap elegan seperti kanvas Figma
+        body: Stack(
+          children: [
+            // Konten Aplikasi Pas 1 Layar
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Container(
+                    width: 480,
+                    height: 1180, // Tinggi panjang utuh seperti frame Figma
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.35),
+                          blurRadius: 36,
+                          offset: const Offset(0, 10),
+                        ),
                       ],
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: MediaQuery(
+                      data: MediaQuery.of(context).copyWith(
+                        size: const Size(480, 1180),
+                      ),
+                      child: widget.child,
                     ),
                   ),
                 ),
               ),
+            ),
 
-              // Mockup Smartphone Fisik
-              Center(
-                child: Container(
-                  width: deviceWidth,
-                  height: deviceHeight,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(46),
-                    // Bezel Luar Smartphone (Titanium Metalic Finish)
-                    border: Border.all(
-                      color: const Color(0xFF334155),
-                      width: 10,
-                    ),
-                    boxShadow: [
-                      // Bayangan Luar Realistis
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.45),
-                        blurRadius: 40,
-                        spreadRadius: 4,
-                        offset: const Offset(0, 18),
-                      ),
-                      // Pendaran Aksen Hijau PundiGo di tepi bezel
-                      BoxShadow(
-                        color: const Color(0xFF00A887).withOpacity(0.18),
-                        blurRadius: 28,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(36),
-                    child: Stack(
-                      children: [
-                        // Layar Konten Aplikasi (Fluid & 100% Scrollable)
-                        Positioned.fill(
-                          child: child,
-                        ),
-
-                        // Kamera Punch-Hole & Earpiece Speaker di Atas (Hardware Mockup)
-                        Positioned(
-                          top: 8,
-                          left: 0,
-                          right: 0,
-                          child: IgnorePointer(
-                            child: Center(
-                              child: Container(
-                                width: 90,
-                                height: 22,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF0F172A),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    // Speaker Grille
-                                    Container(
-                                      width: 40,
-                                      height: 4,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF334155),
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    // Selfie Camera
-                                    Container(
-                                      width: 8,
-                                      height: 8,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: const Color(0xFF1E293B),
-                                        border: Border.all(
-                                          color: const Color(0xFF0284C7).withOpacity(0.6),
-                                          width: 1.2,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              // Watermark / Badge Info di Pojok Kanan Atas
-              Positioned(
-                top: 18,
-                right: 24,
+            // Tombol Kontrol Mode di Pojok Atas
+            Positioned(
+              top: 14,
+              left: 16,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _isFigmaCanvasMode = !_isFigmaCanvasMode;
+                  });
+                },
+                borderRadius: BorderRadius.circular(20),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.08),
+                    color: const Color(0xFF00A887),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withOpacity(0.12)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFF10B981),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
+                    children: const [
+                      Icon(Icons.aspect_ratio_rounded, color: Colors.white, size: 16),
+                      SizedBox(width: 6),
                       Text(
-                        'PundiGo! Mobile Prototype',
-                        style: GoogleFonts.plusJakartaSans(
+                        '🎨 Mode Kanvas Figma (1 Layar Utuh)',
+                        style: TextStyle(
+                          color: Colors.white,
                           fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white.withOpacity(0.85),
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'sans-serif',
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-            ],
+            ),
+          ],
+        ),
+      );
+    }
+
+    // -------------------------------------------------------------------------
+    // MODE PONSEL NORMAL DENGAN SCROLL
+    // -------------------------------------------------------------------------
+    return Scaffold(
+      backgroundColor: const Color(0xFFF1F5F9),
+      body: Stack(
+        children: [
+          Center(
+            child: Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(maxWidth: 480),
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 28,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: widget.child,
+            ),
           ),
-        );
-      },
+          Positioned(
+            top: 14,
+            left: 16,
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  _isFigmaCanvasMode = !_isFigmaCanvasMode;
+                });
+              },
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF334155),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.smartphone_rounded, color: Colors.white, size: 16),
+                    SizedBox(width: 6),
+                    Text(
+                      '📱 Mode Ponsel Scroll (Klik untuk ganti ke Kanvas Figma)',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'sans-serif',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

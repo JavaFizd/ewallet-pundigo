@@ -41,90 +41,183 @@ class KycKtpGuideScreen extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // Ilustrasi Kartu KTP Elegan
+              // =============================================================
+              // ILUSTRASI BINGKAI SCAN KTP (MINIMALIS & NATURAL / HUMAN UI DESIGN)
+              // =============================================================
               Center(
                 child: Container(
                   width: double.infinity,
-                  height: 190,
+                  height: 185,
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFE0F2FE), Color(0xFFEFF6FF)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFF93C5FD), width: 1.5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF3B82F6).withOpacity(0.08),
-                        blurRadius: 18,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
+                    color: const Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5),
                   ),
                   child: Stack(
+                    alignment: Alignment.center,
                     children: [
-                      // Chip & Garis Kartu
+                      // 4 Sudut Siku Kamera Bersih (Corner Brackets)
                       Positioned(
-                        top: 24,
-                        left: 24,
+                        top: 0,
+                        left: 0,
                         child: Container(
-                          width: 42,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFCD34D),
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: const Color(0xFFF59E0B)),
+                          width: 18,
+                          height: 18,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(color: Color(0xFF00A887), width: 2.5),
+                              left: BorderSide(color: Color(0xFF00A887), width: 2.5),
+                            ),
                           ),
-                          child: const Icon(Icons.memory_rounded, color: Color(0xFFB45309), size: 22),
                         ),
                       ),
                       Positioned(
-                        top: 26,
-                        left: 78,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(width: 120, height: 10, decoration: BoxDecoration(color: const Color(0xFF94A3B8).withOpacity(0.4), borderRadius: BorderRadius.circular(4))),
-                            const SizedBox(height: 6),
-                            Container(width: 80, height: 8, decoration: BoxDecoration(color: const Color(0xFF94A3B8).withOpacity(0.25), borderRadius: BorderRadius.circular(4))),
+                        top: 0,
+                        right: 0,
+                        child: Container(
+                          width: 18,
+                          height: 18,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(color: Color(0xFF00A887), width: 2.5),
+                              right: BorderSide(color: Color(0xFF00A887), width: 2.5),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        child: Container(
+                          width: 18,
+                          height: 18,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(color: Color(0xFF00A887), width: 2.5),
+                              left: BorderSide(color: Color(0xFF00A887), width: 2.5),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          width: 18,
+                          height: 18,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(color: Color(0xFF00A887), width: 2.5),
+                              right: BorderSide(color: Color(0xFF00A887), width: 2.5),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // Kartu e-KTP Siluet Wireframe Murni (Standar Desain Figma Human UI)
+                      Container(
+                        width: 280,
+                        height: 135,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
                           ],
                         ),
-                      ),
-                      // Foto KTP di kanan
-                      Positioned(
-                        top: 24,
-                        right: 24,
-                        bottom: 24,
-                        child: Container(
-                          width: 88,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: const Color(0xFFBFDBFE)),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(Icons.person_rounded, size: 44, color: Color(0xFF94A3B8)),
-                              SizedBox(height: 4),
-                              Text('PAS FOTO', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: Color(0xFF64748B))),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Baris NIK & Detail
-                      Positioned(
-                        bottom: 24,
-                        left: 24,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
                           children: [
-                            Container(width: 170, height: 12, decoration: BoxDecoration(color: const Color(0xFF0F172A).withOpacity(0.7), borderRadius: BorderRadius.circular(4))),
-                            const SizedBox(height: 6),
-                            Container(width: 140, height: 8, decoration: BoxDecoration(color: const Color(0xFF64748B).withOpacity(0.3), borderRadius: BorderRadius.circular(4))),
-                            const SizedBox(height: 4),
-                            Container(width: 110, height: 8, decoration: BoxDecoration(color: const Color(0xFF64748B).withOpacity(0.3), borderRadius: BorderRadius.circular(4))),
+                            // Siluet Garis Identitas Sisi Kiri (Tanpa Teks / Nama)
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // Siluet Header Kecil
+                                  Container(
+                                    width: 38,
+                                    height: 7,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF00A887).withOpacity(0.4),
+                                      borderRadius: BorderRadius.circular(3.5),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 14),
+                                  // Siluet NIK
+                                  Container(
+                                    width: 135,
+                                    height: 9,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF94A3B8),
+                                      borderRadius: BorderRadius.circular(4.5),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  // Siluet Nama
+                                  Container(
+                                    width: 95,
+                                    height: 7,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFCBD5E1),
+                                      borderRadius: BorderRadius.circular(3.5),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 7),
+                                  // Siluet Baris Informasi 1
+                                  Container(
+                                    width: 120,
+                                    height: 6,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFE2E8F0),
+                                      borderRadius: BorderRadius.circular(3),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  // Siluet Baris Informasi 2
+                                  Container(
+                                    width: 75,
+                                    height: 6,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFE2E8F0),
+                                      borderRadius: BorderRadius.circular(3),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            // Kotak Pas Foto Siluet di Kanan (Tanpa Teks)
+                            Container(
+                              width: 62,
+                              height: 84,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF1F5F9),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+                              ),
+                              child: Center(
+                                child: Container(
+                                  width: 32,
+                                  height: 32,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFE2E8F0),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.person_rounded,
+                                    color: Color(0xFF94A3B8),
+                                    size: 22,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),

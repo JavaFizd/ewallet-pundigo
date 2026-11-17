@@ -4,6 +4,8 @@ import '../../core/utils/currency_formatter.dart';
 import '../../data/app_state.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/numeric_keyboard.dart';
+import '../auth/reset_pin_screen.dart';
+import 'transaction_receipt_screen.dart';
 
 /// ============================================================================
 /// HALAMAN KONFIRMASI TRANSFER & INPUT PIN
@@ -65,27 +67,54 @@ class _TransferConfirmScreenState extends State<TransferConfirmScreen> {
     final success = _appState.transferSaldo(widget.amount, transferLabel);
 
     if (success) {
-      showDialog(
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => TransactionReceiptScreen(
+            receiptType: ReceiptType.transfer,
+            title: 'Transfer Berhasil',
+            amount: widget.amount,
+            isIncome: false,
+            recipientOrDestination: widget.recipientName,
+            methodOrProvider: widget.destinationName,
+            accountOrPhone: widget.accountOrPhone,
+          ),
+        ),
+      );
+    } else {
+      showModalBottomSheet(
         context: context,
-        barrierDismissible: false,
+        backgroundColor: Colors.transparent,
         builder: (ctx) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-            content: Column(
+          return Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+            ),
+            padding: const EdgeInsets.all(24),
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 64,
-                  height: 64,
+                  width: 44,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFCBD5E1),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  width: 58,
+                  height: 58,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFE8F8F5),
+                    color: Color(0xFFFEF2F2),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.check_rounded, color: Color(0xFF00A887), size: 38),
+                  child: const Icon(Icons.error_outline_rounded, color: Color(0xFFEF4444), size: 32),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 Text(
-                  'Transfer Berhasil!',
+                  'Transfer Gagal Diproses',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
@@ -94,21 +123,18 @@ class _TransferConfirmScreenState extends State<TransferConfirmScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Saldo sebesar ${CurrencyFormatter.format(widget.amount)} telah berhasil dikirim ke ${widget.recipientName} via ${widget.destinationName}.',
+                  'Saldo PundiGo kamu tidak mencukupi untuk transfer sebesar ${CurrencyFormatter.format(widget.amount)}. Silakan isi saldo terlebih dahulu.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 13,
                     color: const Color(0xFF64748B),
-                    height: 1.4,
+                    height: 1.45,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 22),
                 AppButton(
-                  text: 'Kembali ke Beranda',
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  },
+                  text: 'Tutup',
+                  onPressed: () => Navigator.of(ctx).pop(),
                 ),
               ],
             ),
@@ -424,21 +450,40 @@ class _PinVerificationModal extends StatefulWidget {
 
 class _PinVerificationModalState extends State<_PinVerificationModal> {
   String _pin = '';
+  String? _error;
 
   void _onDigit(String digit) {
     if (_pin.length < 6) {
-      setState(() => _pin += digit);
+      setState(() {
+        _error = null;
+        _pin += digit;
+      });
       if (_pin.length == 6) {
-        Future.delayed(const Duration(milliseconds: 250), () {
-          widget.onSuccess();
-        });
+        final expectedPin = AppState.instance.user.pin.isNotEmpty ? AppState.instance.user.pin : '171717';
+        if (_pin == expectedPin) {
+          Future.delayed(const Duration(milliseconds: 250), () {
+            widget.onSuccess();
+          });
+        } else {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            if (mounted) {
+              setState(() {
+                _error = 'PIN salah. Silakan coba lagi atau reset PIN.';
+                _pin = '';
+              });
+            }
+          });
+        }
       }
     }
   }
 
   void _onDelete() {
     if (_pin.isNotEmpty) {
-      setState(() => _pin = _pin.substring(0, _pin.length - 1));
+      setState(() {
+        _error = null;
+        _pin = _pin.substring(0, _pin.length - 1);
+      });
     }
   }
 
@@ -479,7 +524,7 @@ class _PinVerificationModalState extends State<_PinVerificationModal> {
               color: const Color(0xFF64748B),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           // 6 Titik Indikator PIN
           Row(
@@ -502,7 +547,44 @@ class _PinVerificationModalState extends State<_PinVerificationModal> {
             }),
           ),
 
-          const SizedBox(height: 20),
+          if (_error != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              _error!,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                color: const Color(0xFFEF4444),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 10),
+
+          // Tombol Lupa PIN?
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ResetPinScreen(
+                    email: AppState.instance.user.email,
+                    phoneNumber: AppState.instance.user.phone,
+                  ),
+                ),
+              );
+            },
+            child: Text(
+              'Lupa PIN?',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF00A887),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 8),
 
           // Numeric Keypad
           NumericKeyboard(

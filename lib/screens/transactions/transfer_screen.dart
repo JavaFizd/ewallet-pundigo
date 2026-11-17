@@ -142,6 +142,69 @@ class _TransferScreenState extends State<TransferScreen> with SingleTickerProvid
     });
   }
 
+  void _showTransferWarning(String title, String message) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 44,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 18),
+              Container(
+                width: 56,
+                height: 56,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFEF2F2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.warning_amber_rounded, color: Color(0xFFEF4444), size: 30),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                title,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xFF0F172A),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13,
+                  color: const Color(0xFF64748B),
+                  height: 1.45,
+                ),
+              ),
+              const SizedBox(height: 20),
+              AppButton(
+                text: 'Tutup',
+                onPressed: () => Navigator.of(ctx).pop(),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _proceedToConfirm() {
     if (!_appState.user.isPlus) {
       PlusUpgradeDialog.show(context, featureName: 'Transfer ke Bank & E-Wallet');
@@ -149,22 +212,12 @@ class _TransferScreenState extends State<TransferScreen> with SingleTickerProvid
     }
 
     if (_nominal <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Masukkan nominal transfer terlebih dahulu.'),
-          backgroundColor: AppColors.danger,
-        ),
-      );
+      _showTransferWarning('Nominal Transfer Kosong', 'Harap masukkan nominal transfer yang ingin dikirimkan.');
       return;
     }
 
     if (_nominal > _appState.user.saldoUtama) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Saldo PundiGo tidak mencukupi untuk transfer ini.'),
-          backgroundColor: AppColors.danger,
-        ),
-      );
+      _showTransferWarning('Saldo PundiGo Tidak Mencukupi', 'Saldo aktif kamu saat ini ${CurrencyFormatter.format(_appState.user.saldoUtama)}, tidak mencukupi untuk transfer sebesar ${CurrencyFormatter.format(_nominal)}.');
       return;
     }
 

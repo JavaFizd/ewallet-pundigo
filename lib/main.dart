@@ -2,15 +2,22 @@ import 'package:flutter/material.dart';
 
 import 'core/theme/app_theme.dart';
 import 'screens/activity/activity_screen.dart';
+import 'screens/auth/login_screen.dart';
 import 'screens/auth/plus_offer_screen.dart';
 import 'screens/auth/register_screen.dart';
+import 'screens/demo/demo_links_hub_screen.dart';
+import 'screens/demo/notification_minta_saldo_screen.dart';
 import 'screens/features/features_screen.dart';
 import 'screens/main_navigation_screen.dart';
 import 'screens/onboarding/onboarding_screen.dart';
+import 'screens/patungan/patungan_ocr_screen.dart';
+import 'screens/patungan/shared_kas_screen.dart';
+import 'screens/patungan/shared_patungan_screen.dart';
 import 'screens/profile/profile_screen.dart';
 import 'screens/splash/splash_screen.dart';
 import 'screens/transactions/patungan_pintar_screen.dart';
 import 'screens/transactions/request_balance_screen.dart';
+import 'screens/transactions/requested_balance_payment_screen.dart';
 import 'screens/transactions/saku_kelompok_screen.dart';
 import 'screens/transactions/topup_screen.dart';
 import 'screens/transactions/transfer_screen.dart';
@@ -52,10 +59,12 @@ class PundiGoApp extends StatelessWidget {
       builder: (context, child) {
         return MobileFrame(child: child ?? const SizedBox());
       },
-      home: const SplashScreen(),
+      initialRoute: '/',
       routes: {
+        '/': (_) => const SplashScreen(),
         '/splash': (_) => const SplashScreen(),
         '/onboarding': (_) => const OnboardingScreen(),
+        '/login': (_) => const LoginScreen(),
         '/register': (_) => const RegisterScreen(),
         '/plus-offer': (_) => const PlusOfferScreen(),
         '/main': (_) => const MainNavigationScreen(),
@@ -63,7 +72,17 @@ class PundiGoApp extends StatelessWidget {
 
         '/topup': (_) => const TopupScreen(),
         '/request': (_) => const RequestBalanceScreen(),
+        '/pay/request': (_) => const RequestedBalancePaymentScreen(),
+        '/minta-saldo': (_) => const RequestedBalancePaymentScreen(),
+        '/shared-minta-saldo': (_) => const RequestedBalancePaymentScreen(),
+        '/notif-minta-saldo': (_) => const NotificationMintaSaldoScreen(),
+        '/demo-links': (_) => const DemoLinksHubScreen(),
         '/patungan': (_) => const PatunganPintarScreen(),
+        '/patungan-ocr': (_) => const PatunganOcrScreen(),
+        '/shared-patungan': (_) => const SharedPatunganScreen(),
+        '/pay/split-100k': (_) => const SharedPatunganScreen(),
+        '/shared-kas': (_) => const SharedKasScreen(),
+        '/kas/kelompok-3rpl': (_) => const SharedKasScreen(),
         '/kas': (_) => const SakuKelompokScreen(),
         '/activity': (_) => const ActivityScreen(showBackButton: true),
         '/features': (_) => const FeaturesScreen(showBackButton: true),

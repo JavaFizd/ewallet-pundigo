@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../data/app_state.dart';
 import '../../widgets/common/custom_app_bar.dart';
+import '../../widgets/common/in_app_notification.dart';
 
 /// ============================================================================
 /// HALAMAN SAKU KELOMPOK (KAS BERSAMA MAHASISWA & KOST)
@@ -24,10 +26,11 @@ class SakuKelompokScreen extends StatefulWidget {
 
 class _SakuKelompokScreenState extends State<SakuKelompokScreen> {
   final AppState _appState = AppState.instance;
+  bool _hasCreatedKas = false;
 
   // Anggota kelompok dan status iuran bulan ini
   final List<Map<String, dynamic>> _members = [
-    {'name': 'Dinda Syahfitri (Bendahara)', 'paid': true, 'amount': 25000},
+    {'name': 'Taufiq (Bendahara)', 'paid': true, 'amount': 25000},
     {'name': 'Rahmat Hidayat', 'paid': true, 'amount': 25000},
     {'name': 'Maya Lestari', 'paid': true, 'amount': 25000},
     {'name': 'Teuku Daffa', 'paid': false, 'amount': 25000},
@@ -52,7 +55,7 @@ class _SakuKelompokScreenState extends State<SakuKelompokScreen> {
   // Dialog Setor Iuran Kas
   void _showSetorDialog() {
     final amountController = TextEditingController(text: '25000');
-    String selectedMember = 'Dinda Syahfitri';
+    String selectedMember = 'Taufiq';
 
     showModalBottomSheet(
       context: context,
@@ -117,7 +120,7 @@ class _SakuKelompokScreenState extends State<SakuKelompokScreen> {
                       child: DropdownButton<String>(
                         value: selectedMember,
                         isExpanded: true,
-                        items: ['Dinda Syahfitri', 'Rahmat Hidayat', 'Maya Lestari', 'Teuku Daffa'].map((m) {
+                        items: ['Taufiq', 'Rahmat Hidayat', 'Maya Lestari', 'Teuku Daffa'].map((m) {
                           return DropdownMenuItem(value: m, child: Text(m, style: const TextStyle(fontSize: 14)));
                         }).toList(),
                         onChanged: (val) {
@@ -415,7 +418,7 @@ class _SakuKelompokScreenState extends State<SakuKelompokScreen> {
                     const SizedBox(height: 4),
                     Text('Tanggal     : ${date.day}/${date.month}/${date.year}', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                     const SizedBox(height: 4),
-                    const Text('Bendahara : Dinda Syahfitri', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                    const Text('Bendahara : Taufiq', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                     const Divider(thickness: 1, height: 16),
                     Center(
                       child: Container(
@@ -453,47 +456,261 @@ class _SakuKelompokScreenState extends State<SakuKelompokScreen> {
     );
   }
 
-  // Generate Pesan WhatsApp Rekap Kas Bersama
-  String _generateWhatsAppReport() {
-    final kas = _appState.kasKelompok;
-    final buffer = StringBuffer();
-    buffer.writeln('📊 *LAPORAN TRANSPARANSI KAS PUNDIGO!*');
-    buffer.writeln('🏷️ *Kelompok:* ${kas.title}');
-    buffer.writeln('💰 *Saldo Kas Sekarang:* ${CurrencyFormatter.format(kas.collectedAmount)}');
-    buffer.writeln('🎯 *Target Kas:* ${CurrencyFormatter.format(kas.targetAmount)} (${(kas.progressPercentage * 100).toInt()}% tercapai)');
-    buffer.writeln('');
-    buffer.writeln('👥 *Status Iuran Anggota:*');
-    for (int i = 0; i < _members.length; i++) {
-      final m = _members[i];
-      final status = m['paid'] == true ? '[LUNAS ✓]' : '[BELUM BAYAR ⏳]';
-      buffer.writeln('${i + 1}. ${m['name']} - $status (${CurrencyFormatter.format(m['amount'])})');
-    }
-    buffer.writeln('');
-    buffer.writeln('📋 *Mutasi Terakhir:*');
-    final recent = _appState.kasMutasi.take(4).toList();
-    for (final mut in recent) {
-      final sign = mut.isIncome ? '(+)' : '(-)';
-      final note = mut.hasReceipt ? '[Nota Terlampir]' : '';
-      buffer.writeln('• $sign ${mut.title}: ${CurrencyFormatter.format(mut.amount)} $note');
-    }
-    buffer.writeln('');
-    buffer.writeln('📌 _Seluruh mutasi tercatat otomatis dan transparan di aplikasi PundiGo!._');
-    return buffer.toString();
+  Widget _buildStepRow(String num, String title, String desc) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 20,
+          height: 20,
+          decoration: const BoxDecoration(
+            color: Color(0xFF00A887),
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            num,
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              style: GoogleFonts.plusJakartaSans(fontSize: 11.5, color: const Color(0xFF334155), height: 1.3),
+              children: [
+                TextSpan(text: '$title: ', style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                TextSpan(text: desc),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
-  void _copyWhatsAppReport() {
-    final report = _generateWhatsAppReport();
-    Clipboard.setData(ClipboardData(text: report));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Laporan kas disalin! Siap dikirim ke WhatsApp kelompok.'),
-        backgroundColor: Color(0xFF00A887),
-      ),
+  void _shareKasLink() {
+    const link = 'http://localhost:8888/#/shared-kas';
+    Clipboard.setData(const ClipboardData(text: link));
+    InAppNotification.show(
+      context,
+      title: 'Tautan Kas Berhasil Disalin!',
+      message: 'Link saku kas siap dibagikan ke teman: $link',
+      icon: Icons.link_rounded,
+      iconColor: const Color(0xFF00A887),
+      iconBg: const Color(0xFFE6F8F5),
+    );
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.all(22),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFCBD5E1),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE0F7F4),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(Icons.link_rounded, color: Color(0xFF00A887), size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Tautan Saku Kas',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF0F172A),
+                          ),
+                        ),
+                        Text(
+                          'Tautan sudah otomatis disalin ke clipboard',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            color: const Color(0xFF64748B),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.language_rounded, size: 16, color: Color(0xFF00A887)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        link,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF0F172A),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00A887),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    Navigator.of(context).pushNamed('/shared-kas');
+                  },
+                  icon: const Icon(Icons.visibility_rounded, color: Colors.white, size: 18),
+                  label: Text(
+                    '🌐 Buka Tampilan Teman yang Menerima Link',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final user = _appState.user;
+    final bool isTaufiq = user.name.toLowerCase().contains('taufiq');
+    final bool showEmpty = !isTaufiq && !_hasCreatedKas;
+
+    if (showEmpty) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: const CustomAppBar(title: 'Saku Kelompok (Kas)'),
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(28),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 90,
+                    height: 90,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE6F8F5),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF00A887).withOpacity(0.18),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.groups_rounded,
+                      color: Color(0xFF00A887),
+                      size: 46,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Belum Ada Saku Kelompok',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF0F172A),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Akun baru Anda belum memiliki dompet kas bersama. Buat saku kas kelompok pertamamu untuk iuran tugas kuliah, kantor, atau liburan bersama teman secara transparan.',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      color: const Color(0xFF64748B),
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00A887),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 2,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _hasCreatedKas = true;
+                        });
+                      },
+                      icon: const Icon(Icons.add_circle_outline_rounded, color: Colors.white, size: 20),
+                      label: Text(
+                        '✨ Buat Saku Kelompok Baru',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     final kas = _appState.kasKelompok;
     final progress = kas.progressPercentage;
 
@@ -506,6 +723,48 @@ class _SakuKelompokScreenState extends State<SakuKelompokScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // ===============================================================
+              // PANDUAN CARA KERJA KAS (SUPER MUDAH DIPAHAMI)
+              // ===============================================================
+              Container(
+                margin: const EdgeInsets.only(bottom: 14),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFE6F8F5), Color(0xFFF0FDF4)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFF00BFA5).withOpacity(0.35)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.auto_stories_rounded, color: Color(0xFF00897B), size: 18),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Cara Kerja Saku Kas (3 Langkah Mudah)',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF00796B),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    _buildStepRow('1', 'Kumpul Bersama', 'Semua iuran anggota disimpan aman di satu saku digital.'),
+                    const SizedBox(height: 6),
+                    _buildStepRow('2', 'Bagikan Link', 'Cukup bagikan tautan kas ke teman untuk setor atau pantau saldo.'),
+                    const SizedBox(height: 6),
+                    _buildStepRow('3', 'Semua Terlihat', 'Setiap pengeluaran ada bukti fotonya, semua anggota bisa cek real-time!'),
+                  ],
+                ),
+              ),
+
               // ===============================================================
               // KARTU 1: SALDO KAS UTAMA & AKSI CEPAT
               // ===============================================================
@@ -824,17 +1083,17 @@ class _SakuKelompokScreenState extends State<SakuKelompokScreen> {
                     ),
                   ),
                   InkWell(
-                    onTap: _copyWhatsAppReport,
+                    onTap: _shareKasLink,
                     child: Row(
                       children: const [
-                        Icon(Icons.share, size: 14, color: Color(0xFF25D366)),
+                        Icon(Icons.link_rounded, size: 16, color: Color(0xFF00A887)),
                         SizedBox(width: 4),
                         Text(
-                          'Kirim Rekap WA',
+                          'Bagikan Link Kas',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF25D366),
+                            color: Color(0xFF00A887),
                           ),
                         ),
                       ],
@@ -933,20 +1192,24 @@ class _SakuKelompokScreenState extends State<SakuKelompokScreen> {
 
               const SizedBox(height: 20),
 
-              // Tombol Bagikan Laporan Kas ke WhatsApp
+              // Tombol Bagikan Link Saku Kas (Satu-satunya Opsi Berbagi Sesuai Permintaan)
               SizedBox(
                 width: double.infinity,
-                height: 48,
+                height: 50,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF25D366),
+                    backgroundColor: const Color(0xFF00A887),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),
-                  onPressed: _copyWhatsAppReport,
-                  icon: const Icon(Icons.share, color: Colors.white, size: 18),
-                  label: const Text(
-                    'Bagikan Laporan Kas ke WhatsApp',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  onPressed: _shareKasLink,
+                  icon: const Icon(Icons.link_rounded, color: Colors.white, size: 20),
+                  label: Text(
+                    '🔗 Salin & Bagikan Link Saku Kas',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),

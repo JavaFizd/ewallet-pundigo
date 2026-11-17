@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
 import '../../widgets/common/custom_text_field.dart';
 import '../../widgets/common/pg_logo.dart';
+import '../../widgets/common/pundigo_background.dart';
 import 'login_screen.dart';
 import 'otp_screen.dart';
 
@@ -38,9 +39,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _fillSampleData() {
     setState(() {
       _nameController.text = 'Dinda Syahfitri';
-      _phoneController.text = '82501800288';
-      _emailController.text = 'alhamdulillah.dinda@gmail.com';
-      _passwordController.text = 'PundiGo123!';
+      _phoneController.text = '81234567890';
+      _emailController.text = 'dinda.syahfitri@gmail.com';
+      _passwordController.text = 'DindaPundi123!';
+      _obscurePassword = false;
       _agreeTerms = true;
     });
   }
@@ -75,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (mounted) setState(() {});
   }
 
-  void _submitOtp(String method) {
+  void _submitOtp([String method = 'Email']) {
     if (!_isFormValid) {
       if (!_agreeTerms) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -101,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           name: _nameController.text.trim(),
           phoneNumber: '+62 ${_phoneController.text.trim()}',
           email: _emailController.text.trim(),
-          method: method,
+          method: 'Email',
         ),
       ),
     );
@@ -126,8 +128,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: PundigoBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,7 +239,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               const Icon(Icons.flash_on_rounded, size: 14, color: Color(0xFF00A887)),
                               const SizedBox(width: 3),
                               Text(
-                                '⚡ Isi Contoh',
+                                '⚡ Isi Otomatis Akun Demo',
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.w700,
@@ -359,9 +362,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               const SizedBox(height: 24),
 
-              // Tombol 1: Kirim OTP via WhatsApp
+              // Tombol Utama: Kirim Kode OTP ke Email
               InkWell(
-                onTap: () => _submitOtp('WhatsApp'),
+                onTap: () => _submitOtp('Email'),
                 borderRadius: BorderRadius.circular(16),
                 child: Container(
                   width: double.infinity,
@@ -389,8 +392,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      const Icon(Icons.email_outlined, color: Colors.white, size: 20),
+                      const SizedBox(width: 8),
                       Text(
-                        'Kirim kode OTP via WhatsApp',
+                        'Kirim Kode OTP ke Email',
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
@@ -405,73 +410,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
 
               const SizedBox(height: 12),
-
-              // Tombol 2: Kirim OTP via SMS
-              InkWell(
-                onTap: () => _submitOtp('SMS'),
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  width: double.infinity,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: isValid ? Colors.white : const Color(0xFFD6D6D6),
-                    border: isValid
-                        ? Border.all(color: const Color(0xFF00BFA5), width: 1.5)
-                        : null,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Kirim kode OTP via SMS',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: isValid ? const Color(0xFF00A887) : Colors.white,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Icon(
-                        Icons.arrow_forward_rounded,
-                        color: isValid ? const Color(0xFF00A887) : Colors.white,
-                        size: 18,
-                      ),
-                    ],
+              Center(
+                child: Text(
+                  'Kode verifikasi 6 digit akan dikirimkan ke email pendaftaran.',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    color: const Color(0xFF94A3B8),
                   ),
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
-              // Footer: Sudah punya akun? Masuk di sini
+              // Footer: Sudah punya akun? Masuk
               Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Sudah punya akun? ',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        color: const Color(0xFF64748B),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (_) => const LoginScreen()),
-                        );
-                      },
-                      child: Text(
-                        'Masuk di sini',
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'Sudah punya akun? ',
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF00BFA5),
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF64748B),
                         ),
+                        children: [
+                          TextSpan(
+                            text: 'Login',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF00A887),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
 
@@ -479,6 +460,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

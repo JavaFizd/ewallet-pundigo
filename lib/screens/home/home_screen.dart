@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../data/app_state.dart';
 import '../../widgets/common/pg_logo.dart';
-import '../../widgets/common/plus_upgrade_dialog.dart';
 import '../../widgets/home/balance_header.dart';
 import '../../widgets/home/notification_modal.dart';
 import '../../widgets/home/promo_banner.dart';
 import '../../widgets/home/quick_actions.dart';
 import '../../widgets/home/smart_feature_card.dart';
+import '../kyc/kyc_ktp_guide_screen.dart';
 import '../profile/profile_screen.dart';
 import '../transactions/patungan_pintar_screen.dart';
 import '../transactions/request_balance_screen.dart';
@@ -113,11 +113,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: -40,
+                  bottom: -36,
                   child: QuickActionsCard(
                     onTransferTap: () {
                       if (!_appState.user.isPlus) {
-                        PlusUpgradeDialog.show(context, featureName: 'Transfer ke Bank & E-Wallet');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const KycKtpGuideScreen()),
+                        );
                         return;
                       }
                       Navigator.of(context).push(
@@ -131,13 +133,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     onRequestTap: () {
                       if (!_appState.user.isPlus) {
-                        PlusUpgradeDialog.show(context, featureName: 'Minta Saldo').then((upgraded) {
-                          if (upgraded == true && mounted && context.mounted) {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => const RequestBalanceScreen()),
-                            );
-                          }
-                        });
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const KycKtpGuideScreen()),
+                        );
                         return;
                       }
                       Navigator.of(context).push(
@@ -154,18 +152,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
 
-            // Jarak Penyeimbang Kartu Melayang ke Logo PG (Persis Figma DASHBOARD-3: 22px)
-            const SizedBox(height: 62),
+            // Jarak Penyeimbang Kartu Melayang ke Logo PG
+            const SizedBox(height: 48),
 
             // =================================================================
             // 2. LOGO PUNDIGO KECIL DI TENGAH (PERSIS FIGMA DASHBOARD-3.png)
             // =================================================================
             const Center(child: PgLogo(size: 26)),
 
-            const SizedBox(height: 26),
+            const SizedBox(height: 20),
 
             // =================================================================
-            // 3. BAGIAN "UANGMU, LEBIH TERATUR" (FITUR CERDAS)
+            // 3. BAGIAN "UANGMU, LEBIH TERATUR" (PATUNGAN PINTAR & SAKU KELOMPOK)
             // =================================================================
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -209,66 +207,75 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   const SizedBox(height: 14),
 
-                  // Kartu 1: Patungan Pintar (dengan aset ilustrasi asli Figma)
+                  // Kartu 1: Patungan Pintar (dengan aset ilustrasi resmi Figma)
                   SmartFeatureCard(
                     title: 'Patungan Pintar',
                     description: 'Scan struk, bagi tagihan otomatis',
                     actionText: 'Mulai patungan',
                     imageAsset: 'assets/images/patungan_illustration.png',
                     onTap: () {
+                      if (!_appState.user.isPlus) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const KycKtpGuideScreen()),
+                        );
+                        return;
+                      }
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const PatunganPintarScreen()),
                       );
                     },
                   ),
 
-                  // Kartu 2: Saku Kelompok (dengan aset ilustrasi asli Figma)
+                  // Kartu 2: Saku Kelompok (dengan aset ilustrasi resmi Figma)
                   SmartFeatureCard(
                     title: 'Saku Kelompok',
                     description: 'Dompet kas bersama yang praktis',
                     actionText: 'Buka Saku',
                     imageAsset: 'assets/images/saku_illustration.png',
                     onTap: () {
+                      if (!_appState.user.isPlus) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const KycKtpGuideScreen()),
+                        );
+                        return;
+                      }
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const SakuKelompokScreen()),
                       );
                     },
                   ),
 
-                  const SizedBox(height: 4),
-
-                  // =============================================================
-                  // 4. BANNER PROMO TAHUNAN PUNDIGO (dengan aset ilustrasi asli Figma)
-                  // =============================================================
-                  PromoBannerCard(
-                    onTap: () {
-                      if (_appState.user.isPlus) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const TransferScreen(initialTabIndex: 1),
-                          ),
-                        );
-                      } else {
-                        PlusUpgradeDialog.show(
-                          context,
-                          featureName: 'Gratis Transfer ke Semua Bank',
-                        ).then((upgraded) {
-                          if (upgraded == true && mounted && context.mounted) {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const TransferScreen(initialTabIndex: 1),
-                              ),
-                            );
-                          }
-                        });
-                      }
-                    },
-                  ),
-
-                  const SizedBox(height: 52),
+                  const SizedBox(height: 6),
                 ],
               ),
             ),
+
+            // =================================================================
+            // 4. BANNER PROMO TAHUNAN PUNDIGO (dengan aset ilustrasi asli Figma)
+            // =================================================================
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: PromoBannerCard(
+                onTap: () {
+                  if (_appState.user.isPlus) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const TransferScreen(initialTabIndex: 1),
+                      ),
+                    );
+                  } else {
+                    // Belum upgrade: langsung masuk ke pengisian KTP & Wajah dulu!
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const KycKtpGuideScreen(),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+
+            const SizedBox(height: 52),
           ],
         ),
       ),

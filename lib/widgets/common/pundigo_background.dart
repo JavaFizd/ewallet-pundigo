@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
 /// ============================================================================
-/// BACKGROUND RESMI PUNDIGO (POLKADOT BESAR #ACEDFF & #6CFBCB)
+/// BACKGROUND RESMI PUNDIGO (GRADASI AMBIENT ASLI FIGMA 'UNTITLED')
 /// ============================================================================
-/// Sesuai layer 'HALAMAN PEMBUKA' & 'LOADING SCREEN' di Figma:
-/// - Warna kanvas: Putih bersih (Colors.white).
-/// - Ellipse 1 (Polkadot Besar Atas): Warna #ACEDFF dengan gradien pendaran lembut.
-/// - Ellipse 2 (Polkadot Besar Bawah): Warna #6CFBCB dengan gradien pendaran lembut.
-/// - Pusat: Ambient radial glow cyan halus di area logo.
+/// Latar belakang otentik sesuai desain di folder figma_designs/Untitled:
+/// - Pendaran lembut biru langit (#DAF4FF) di sudut atas.
+/// - Area tengah putih bersih (#F8F9FE).
+/// - Pendaran lembut mint/toska (#CEFAF0) di sudut bawah.
 /// ============================================================================
 class PundigoBackground extends StatelessWidget {
   final Widget child;
@@ -17,11 +16,11 @@ class PundigoBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: const Color(0xFFF8F9FF),
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Latar Belakang Asli Figma (Polkadot Halus #ACEDFF & #6CFBCB)
+          // Background Asli Figma dari folder Untitled
           Positioned.fill(
             child: Image.asset(
               'assets/images/pundigo_splash_bg.png',
@@ -30,11 +29,10 @@ class PundigoBackground extends StatelessWidget {
             ),
           ),
 
-          // Konten Utama
+          // Konten Utama Layar
           child,
         ],
       ),
     );
   }
 }
-

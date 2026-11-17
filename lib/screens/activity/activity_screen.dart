@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/app_state.dart';
 import '../../widgets/common/custom_app_bar.dart';
+import '../../widgets/common/in_app_notification.dart';
 import '../transactions/patungan_pintar_screen.dart';
 import '../transactions/saku_kelompok_screen.dart';
 import '../transactions/transaction_history_screen.dart';
@@ -212,6 +213,33 @@ class _ActivityScreenState extends State<ActivityScreen> with SingleTickerProvid
   // FEED: SEMUA AKTIVITAS
   // ===========================================================================
   Widget _buildAllActivitiesView(dynamic user, dynamic kas) {
+    if (_appState.isNewAccount) {
+      return ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        children: [
+          _buildWelcomeNewUserCard(user),
+          const SizedBox(height: 14),
+          _buildActivityItem(
+            icon: Icons.person_add_rounded,
+            iconBg: const Color(0xFFE6F8F5),
+            iconColor: const Color(0xFF00A887),
+            title: 'Pendaftaran Akun Baru Berhasil',
+            description: 'Selamat datang di PundiGo! Dompet Anda siap digunakan untuk transfer, patungan, dan kas kelompok.',
+            time: 'Baru saja',
+          ),
+          const SizedBox(height: 12),
+          _buildActivityItem(
+            icon: Icons.shield_rounded,
+            iconBg: const Color(0xFFEFF6FF),
+            iconColor: const Color(0xFF2563EB),
+            title: 'Perlindungan Akun Aktif',
+            description: 'PIN transaksi 6-digit dan autentikasi email (${user.email}) telah terdaftar dengan aman.',
+            time: 'Baru saja',
+          ),
+        ],
+      );
+    }
+
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       children: [
@@ -225,11 +253,11 @@ class _ActivityScreenState extends State<ActivityScreen> with SingleTickerProvid
               setState(() {
                 _isSplitBillPaid = true;
               });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Tagihan Patungan Pintar Rp 25.000 berhasil dibayar!'),
-                  backgroundColor: Color(0xFF059669),
-                ),
+              InAppNotification.show(
+                context,
+                title: 'Pembayaran Patungan Berhasil!',
+                message: 'Tagihan Patungan Pintar Rp 25.000 berhasil dibayar ke Naufal Daffa.',
+                icon: Icons.check_circle_rounded,
               );
             },
             onDetails: () {
@@ -300,6 +328,20 @@ class _ActivityScreenState extends State<ActivityScreen> with SingleTickerProvid
   // FEED: KAS & PATUNGAN
   // ===========================================================================
   Widget _buildKasAndPatunganView(dynamic kas) {
+    if (_appState.isNewAccount) {
+      return _buildEmptyState(
+        icon: Icons.groups_outlined,
+        title: 'Belum Ada Kas atau Patungan',
+        message: 'Akun Anda baru dibuat sehingga belum memiliki kas kelompok atau tagihan patungan bersama teman.',
+        actionText: 'Mulai Buat Kas / Patungan',
+        onAction: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const PatunganPintarScreen()),
+          );
+        },
+      );
+    }
+
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       children: [
@@ -340,6 +382,13 @@ class _ActivityScreenState extends State<ActivityScreen> with SingleTickerProvid
   // FEED: PERMINTAAN SALDO
   // ===========================================================================
   Widget _buildRequestsView() {
+    if (_appState.isNewAccount) {
+      return _buildEmptyState(
+        icon: Icons.call_received_rounded,
+        title: 'Belum Ada Permintaan Saldo',
+        message: 'Anda belum mengirim atau menerima permintaan saldo dari teman.',
+      );
+    }
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       children: [
@@ -626,6 +675,161 @@ class _ActivityScreenState extends State<ActivityScreen> with SingleTickerProvid
             ),
           ],
         ],
+      ),
+    );
+  }
+
+  // ===========================================================================
+  // WIDGET KARTU SAMBUTAN UNTUK PENGGUNA AKUN BARU
+  // ===========================================================================
+  Widget _buildWelcomeNewUserCard(dynamic user) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF00796B), Color(0xFF004D40)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF00796B).withOpacity(0.25),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.celebration_rounded, color: Colors.white, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Selamat Datang, ${user.name}!',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      'Akun Anda telah aktif dan siap digunakan',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 11,
+                        color: Colors.white.withOpacity(0.85),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.info_outline_rounded, color: Colors.white70, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Riwayat aktivitas, kas, dan patungan Anda masih bersih karena akun baru dibuat.',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11.5,
+                      color: Colors.white.withOpacity(0.9),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===========================================================================
+  // WIDGET EMPTY STATE UNTUK FEED
+  // ===========================================================================
+  Widget _buildEmptyState({
+    required IconData icon,
+    required String title,
+    required String message,
+    String? actionText,
+    VoidCallback? onAction,
+  }) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF1F5F9),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 36, color: const Color(0xFF94A3B8)),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF1E293B),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                color: const Color(0xFF64748B),
+                height: 1.4,
+              ),
+            ),
+            if (actionText != null && onAction != null) ...[
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: onAction,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00796B),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  elevation: 0,
+                ),
+                child: Text(
+                  actionText,
+                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 13),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

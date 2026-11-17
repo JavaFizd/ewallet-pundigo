@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../screens/auth/plus_offer_screen.dart';
+import '../../screens/kyc/kyc_ktp_guide_screen.dart';
 
 /// ============================================================================
 /// DIALOG PERINGATAN UPGRADE PUNDIGO PLUS
@@ -168,9 +168,9 @@ class PlusUpgradeDialog extends StatelessWidget {
               ),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop(true);
+                  Navigator.of(context).pop(false);
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const PlusOfferScreen()),
+                    MaterialPageRoute(builder: (_) => const KycKtpGuideScreen()),
                   );
                 },
                 style: ElevatedButton.styleFrom(

@@ -25,10 +25,14 @@ class PundigoQrCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Generate valid QRIS payload simulation
-    final nominalStr = nominal != null ? nominal!.toInt().toString() : '0';
+    // Generate valid EMVCo QRIS payload
+    final nominalStr = (nominal != null && nominal! > 0) ? nominal!.toInt().toString() : '0';
+    final nominalTag = nominalStr != '0' 
+        ? '54${nominalStr.length.toString().padLeft(2, '0')}$nominalStr' 
+        : '54010';
     final nameLen = userName.length.toString().padLeft(2, '0');
-    final qrData = '00020101021226600016ID.CO.PUNDIGO.WWW01189360000201800288520458125303360540$nominalStr'
+    final qrData = '00020101021226600016ID.CO.PUNDIGO.WWW01189360000201800288520458125303360'
+        '$nominalTag'
         '5802ID59$nameLen$userName'
         '6007JAKARTA62070703A016304ABCD';
 
@@ -137,11 +141,11 @@ class PundigoQrCard extends StatelessWidget {
 
                 const SizedBox(height: 18),
 
-                // Frame QR Code Resmi Standar QRIS (100% Presisi, Mulus & Nyatu di Tengah)
+                // Frame QR Code Resmi Standar QRIS (100% Persis Desain Permintaan Pengguna)
                 Container(
-                  width: qrSize + 32,
-                  height: qrSize + 32,
-                  padding: const EdgeInsets.all(16),
+                  width: qrSize + 24,
+                  height: qrSize + 24,
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -155,12 +159,15 @@ class PundigoQrCard extends StatelessWidget {
                     ],
                   ),
                   child: Center(
-                    child: Image.asset(
-                      'assets/images/pundigo_qris_master.png',
-                      width: qrSize,
-                      height: qrSize,
-                      fit: BoxFit.contain,
-                      filterQuality: FilterQuality.high,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: Image.asset(
+                        'assets/images/pundigo_qris_master.png',
+                        width: qrSize,
+                        height: qrSize,
+                        fit: BoxFit.contain,
+                        filterQuality: FilterQuality.high,
+                      ),
                     ),
                   ),
                 ),

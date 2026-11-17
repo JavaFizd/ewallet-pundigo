@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/app_state.dart';
 import '../../widgets/common/custom_app_bar.dart';
 import '../../widgets/common/numeric_keyboard.dart';
+import '../../widgets/common/pundigo_background.dart';
 import 'plus_offer_screen.dart';
 
 /// ============================================================================
@@ -26,8 +28,8 @@ class PinScreen extends StatefulWidget {
   const PinScreen({
     super.key,
     this.name = 'Dinda Syahfitri',
-    this.phone = '+62 825-0180-0288',
-    this.email = 'alhamdulillah.dinda@gmail.com',
+    this.phone = '+62 812-3456-7890',
+    this.email = 'dinda.syahfitri@gmail.com',
     this.isCreatingPin = true,
     this.originalPin,
   });
@@ -61,7 +63,7 @@ class _PinScreenState extends State<PinScreen> {
   }
 
   void _quickFillPin() {
-    final pinToFill = widget.isCreatingPin ? '170845' : (widget.originalPin ?? '170845');
+    final pinToFill = widget.isCreatingPin ? '171717' : (widget.originalPin ?? '171717');
     setState(() {
       _enteredPin = pinToFill;
     });
@@ -124,9 +126,10 @@ class _PinScreenState extends State<PinScreen> {
     final title = widget.isCreatingPin ? 'Buat PIN Akun' : 'Konfirmasi PIN Akun';
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: title),
-      body: SafeArea(
+      body: PundigoBackground(
+        child: SafeArea(
         child: Column(
           children: [
             Expanded(
@@ -317,8 +320,8 @@ class _PinScreenState extends State<PinScreen> {
                             const SizedBox(width: 4),
                             Text(
                               widget.isCreatingPin
-                                  ? 'Simulasi Cepat (Isi 170845)'
-                                  : 'Cocokkan PIN Cepat (170845)',
+                                  ? '⚡ Isi Otomatis PIN (171717)'
+                                  : '⚡ Cocokkan Otomatis PIN (171717)',
                               style: const TextStyle(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w600,
@@ -348,14 +351,15 @@ class _PinScreenState extends State<PinScreen> {
             if (!widget.isCreatingPin)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: TextButton(
+                child: TextButton.icon(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text(
-                    'Ubah PIN sebelumnya',
-                    style: TextStyle(
+                  icon: const Icon(Icons.arrow_back_rounded, size: 16, color: Color(0xFF00A887)),
+                  label: Text(
+                    'Lupa PIN yang Anda buat? Ulangi Langkah 1',
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryTeal,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF00A887),
                     ),
                   ),
                 ),
@@ -370,6 +374,7 @@ class _PinScreenState extends State<PinScreen> {
             const SizedBox(height: 12),
           ],
         ),
+      ),
       ),
     );
   }

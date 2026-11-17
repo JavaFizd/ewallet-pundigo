@@ -47,10 +47,16 @@ app.*.map.json
 # Widget Preview related
 .widget_preview/
 
-# Root temporary scratch files
+# Root temporary scratch files & test scripts
 /*.png
 /*.html
+/*.bat
+/*.py
 /figma_designs/
 /figma_export/
 /figma_exports/
+/figma_assets/
+/ss_input/
+/scripts/
+
 

@@ -12,17 +12,17 @@ import '../models/feature_models.dart';
 ///   digunakan pada tahap integrasi backend berikutnya.
 /// ============================================================================
 class DummyData {
-  // Profil Pengguna Utama (Sesuai Desain Figma DASHBOARD-3.png: Saldo Rp100.000)
+  // Profil Pengguna Utama (Akun Terdaftar: topikpanas@gmail.com / 08123456789 / PIN 171717)
   static UserModel currentUser = UserModel(
     id: 'user_001',
-    name: 'Dinda Syahfitri',
-    phone: '+62 825-0180-0288',
-    email: 'alhamdulillah.dinda@gmail.com',
-    initials: 'DS',
-    accountType: 'Akun Basic',
-    saldoUtama: 0,
-    saldoDompet: 0,
-    pin: '170845',
+    name: 'Taufiq',
+    phone: '08123456789',
+    email: 'topikpanas@gmail.com',
+    initials: 'TF',
+    accountType: 'Akun Plus',
+    saldoUtama: 100000,
+    saldoDompet: 50000,
+    pin: '171717',
   );
 
   // Penerima Transfer Rekomendasi (Sesuai Desain Figma: Naufal Daffa)

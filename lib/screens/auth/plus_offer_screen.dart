@@ -6,16 +6,16 @@ import '../kyc/kyc_ktp_guide_screen.dart';
 import '../kyc/kyc_face_scan_screen.dart';
 
 /// ============================================================================
-/// HALAMAN PENAWARAN PUNDIGO! PLUS (100% PERSIS FIGMA 'Penawaran PundiGo PLus.png')
+/// HALAMAN PENAWARAN PUNDIGO! PLUS (100% PERSIS DESAIN FIGMA RESMI)
 /// ============================================================================
-/// Fitur & Tata Letak:
-/// 1. Top Bar: Teks 'PundiGo! Plus' di kiri & logo emblem PG di kanan.
-/// 2. Badge Status: '✓ PIN akun berhasil dibuat' dengan ikon centang toska.
-/// 3. Judul Besar: 'Kenalan dengan PundiGo! Plus'.
-/// 4. Kartu Gradien Fitur Plus: 'Bisa transfer dengan akun Plus' dengan dompet & (+).
-/// 5. Kartu Persyaratan: Siapkan KTP & Wajah/selfie dengan kotak biru lembut.
+/// Sesuai tangkapan layar desain Figma:
+/// 1. Top Bar: Teks 'PundiGo! Plus' di kiri & logo PG di kanan pada bar lembut.
+/// 2. Badge Status: Lingkaran mint toska dengan centang [✓ PIN akun berhasil dibuat].
+/// 3. Judul Besar: 'Kenalan dengan \n PundiGo! Plus' & subjudul verifikasi identitas.
+/// 4. Kartu Gradien Fitur Plus: Aset vektor asli [plus_offer_card_exact.png] (816x264).
+/// 5. Kartu Persyaratan: Tata letak kompak, bersih tanpa garis patah / cacat visual.
 /// 6. Catatan penjelas: 'Bisa lanjut tanpa upgrade sekarang. Tingkatkan ke Plus nanti saat kamu siap.'
-/// 7. Tombol Utama: 'Tingkatkan ke Plus ➔' (Gradien toska-biru) -> Membuka Alur KYC KTP & Wajah.
+/// 7. Tombol Utama: 'Tingkatkan ke Plus ➔' (Gradien toska-biru).
 /// 8. Tombol Sekunder: 'Nanti saja'.
 /// ============================================================================
 class PlusOfferScreen extends StatelessWidget {
@@ -29,7 +29,6 @@ class PlusOfferScreen extends StatelessWidget {
   }
 
   void _upgradeToPlus(BuildContext context) {
-    // Alur resmi pendaftaran Akun Plus: Verifikasi e-KTP & Biometrik Wajah
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const KycKtpGuideScreen()),
     );
@@ -38,65 +37,67 @@ class PlusOfferScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FD),
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ===============================================================
-              // 1. TOP BAR: PundiGo! Plus & Logo PG (Persis Figma)
-              // ===============================================================
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text(
-                      'PundiGo! Plus',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF1E293B),
-                        letterSpacing: -0.3,
-                      ),
+        child: Column(
+          children: [
+            // =================================================================
+            // 1. TOP BAR DENGAN BACKGROUND LEMBUT (PERSIS FIGMA)
+            // =================================================================
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              color: const Color(0xFFF1F5F9), // Soft slate header sesuai desain
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'PundiGo! Plus',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 16.5,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF0F172A),
+                      letterSpacing: -0.2,
                     ),
-                    PgLogo(size: 28),
-                  ],
-                ),
+                  ),
+                  const PgLogo(size: 26),
+                ],
               ),
+            ),
 
-              const Divider(height: 1, color: Color(0xFFF1F5F9)),
-
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+            // =================================================================
+            // 2. KONTEN DENGAN TATA LETAK PRESISI FIGMA
+            // =================================================================
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ===============================================================
-                    // 2. BADGE SUKSES: ✓ PIN akun berhasil dibuat
-                    // ===============================================================
+                    // Badge: ✓ PIN akun berhasil dibuat (Centang Hijau Mint Pasti Tampil)
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          width: 22,
-                          height: 22,
+                          width: 20,
+                          height: 20,
                           decoration: const BoxDecoration(
-                            color: Color(0xFFD8F8F0),
+                            color: Color(0xFFD1FADF), // Soft mint green circle
                             shape: BoxShape.circle,
                           ),
-                          alignment: Alignment.center,
                           child: const Icon(
-                            Icons.check,
-                            color: Color(0xFF00BFA5),
-                            size: 14,
+                            Icons.check_rounded,
+                            color: Color(0xFF00A887), // Emerald checkmark
+                            size: 13,
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'PIN akun berhasil dibuat',
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 12.5,
+                            fontSize: 12,
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFF00897B),
                           ),
@@ -104,79 +105,77 @@ class PlusOfferScreen extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 12),
 
-                    // ===============================================================
-                    // 3. JUDUL BESAR & SUBJUDUL RESMI FIGMA
-                    // ===============================================================
+                    // Judul Besar & Subjudul
                     Text(
                       'Kenalan dengan\nPundiGo! Plus',
                       style: GoogleFonts.plusJakartaSans(
-                        fontSize: 26,
+                        fontSize: 22,
                         fontWeight: FontWeight.w800,
-                        color: const Color(0xFF1E293B),
+                        color: const Color(0xFF0F172A),
                         height: 1.2,
-                        letterSpacing: -0.4,
+                        letterSpacing: -0.3,
                       ),
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
 
                     Text(
                       'Mau akses lebih? Tingkatkan akunmu dengan verifikasi identitas.',
                       style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
+                        fontSize: 12,
                         fontWeight: FontWeight.w400,
                         color: const Color(0xFF64748B),
-                        height: 1.4,
+                        height: 1.35,
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 14),
 
-                    // ===============================================================
-                    // 4. KARTU GRADIEN RESMI FIGMA (DOMPET & FITUR PLUS)
-                    // ===============================================================
+                    // =========================================================
+                    // 3. KARTU GRADIEN RESMI FIGMA (ASET EXACT 816x264)
+                    // =========================================================
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF00BFA5).withOpacity(0.25),
-                            blurRadius: 16,
-                            offset: const Offset(0, 6),
+                            color: const Color(0xFF00BFA5).withOpacity(0.22),
+                            blurRadius: 14,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(16),
                         child: Image.asset(
                           'assets/images/plus_offer_card_exact.png',
                           width: double.infinity,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.fitWidth,
                           filterQuality: FilterQuality.high,
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
 
-                    // ===============================================================
-                    // 5. KARTU PERSYARATAN DENGAN IKON ASLI FIGMA
-                    // ===============================================================
+                    // =========================================================
+                    // 4. KARTU PERSYARATAN (TATA LETAK BERSIH & RAPI SESUAI FIGMA)
+                    // =========================================================
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE2E8F0)),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.02),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
@@ -186,246 +185,183 @@ class PlusOfferScreen extends StatelessWidget {
                           Text(
                             'Untuk jadi Plus, siapkan:',
                             style: GoogleFonts.plusJakartaSans(
-                              fontSize: 15,
+                              fontSize: 14.5,
                               fontWeight: FontWeight.w800,
                               color: const Color(0xFF0F172A),
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 3),
                           Text(
                             'Verifikasi identitas saat kamu siap.',
                             style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
+                              fontSize: 11.5,
                               fontWeight: FontWeight.w400,
                               color: const Color(0xFF64748B),
                             ),
                           ),
 
-                          const SizedBox(height: 18),
+                          const SizedBox(height: 16),
 
-                          // Syarat 1: KTP milikmu (Bisa Langsung Diklik)
+                          // Syarat 1: KTP milikmu
                           InkWell(
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(builder: (_) => const KycKtpGuideScreen()),
                               );
                             },
-                            borderRadius: BorderRadius.circular(14),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF8FAFC),
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(color: const Color(0xFFE2E8F0)),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const _KtpRequirementIcon(),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'KTP milikmu',
-                                              style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w700,
-                                                color: const Color(0xFF0F172A),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xFFE6F8F5),
-                                                borderRadius: BorderRadius.circular(6),
-                                              ),
-                                              child: const Text(
-                                                'Wajib',
-                                                style: TextStyle(
-                                                  color: Color(0xFF00A887),
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                            borderRadius: BorderRadius.circular(8),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const _KtpRequirementIcon(),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'KTP milikmu',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 13.5,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xFF0F172A),
                                         ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          'Scan atau foto e-KTP fisik yang jelas.',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w400,
-                                            color: const Color(0xFF64748B),
-                                          ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        'Scan atau foto KTP yang jelas.',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xFF64748B),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                  const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Color(0xFF00A887)),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
 
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 16),
 
-                          // Syarat 2: Wajah / selfie (Bisa Langsung Diklik)
+                          // Syarat 2: Wajah / selfie (Bebas dari cacat garis bawah)
                           InkWell(
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(builder: (_) => const KycFaceScanScreen()),
                               );
                             },
-                            borderRadius: BorderRadius.circular(14),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF8FAFC),
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(color: const Color(0xFFE2E8F0)),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const _FaceRequirementIcon(),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'Wajah / selfie',
-                                              style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w700,
-                                                color: const Color(0xFF0F172A),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xFFEFF6FF),
-                                                borderRadius: BorderRadius.circular(6),
-                                              ),
-                                              child: const Text(
-                                                'Biometrik',
-                                                style: TextStyle(
-                                                  color: Color(0xFF2563EB),
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                            borderRadius: BorderRadius.circular(8),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const _FaceRequirementIcon(),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'Wajah / selfie',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 13.5,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xFF0F172A),
                                         ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          'Verifikasi liveness wajah untuk cocokkan KTP.',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w400,
-                                            color: const Color(0xFF64748B),
-                                          ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        'Verifikasi wajah untuk cocokkan identitas.',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xFF64748B),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                  const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Color(0xFF2563EB)),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 22),
 
-                    // ===============================================================
-                    // 6. TEKS DISCLAIMER TENGAH
-                    // ===============================================================
+                    // Catatan Penjelas Bawah
                     Center(
                       child: Text(
                         'Bisa lanjut tanpa upgrade sekarang.\nTingkatkan ke Plus nanti saat kamu siap.',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.plusJakartaSans(
-                          fontSize: 12.5,
+                          fontSize: 11.5,
                           fontWeight: FontWeight.w400,
                           color: const Color(0xFF64748B),
-                          height: 1.45,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // ===============================================================
-                    // 7. TOMBOL 1: Tingkatkan ke Plus ➔ (Gradien Mint-Biru)
-                    // ===============================================================
-                    InkWell(
-                      onTap: () => _upgradeToPlus(context),
-                      borderRadius: BorderRadius.circular(16),
-                      child: Container(
-                        width: double.infinity,
-                        height: 52,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF00BFA5), Color(0xFF1E88E5)],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF00BFA5).withOpacity(0.35),
-                              blurRadius: 14,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              'Tingkatkan ke Plus',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                letterSpacing: 0.2,
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 17),
-                          ],
+                          height: 1.4,
                         ),
                       ),
                     ),
 
                     const SizedBox(height: 14),
 
-                    // ===============================================================
-                    // 8. TOMBOL 2: Nanti saja (Teks Hijau Toska)
-                    // ===============================================================
+                    // Tombol 1: Tingkatkan ke Plus ➔
+                    InkWell(
+                      onTap: () => _upgradeToPlus(context),
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        width: double.infinity,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF00BFA5), Color(0xFF2979FF)],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF00BFA5).withOpacity(0.32),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Tingkatkan ke Plus',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14.5,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 16),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // Tombol 2: Nanti saja
                     Center(
                       child: InkWell(
                         onTap: () => _skipToDashboard(context),
                         borderRadius: BorderRadius.circular(8),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                           child: Text(
                             'Nanti saja',
                             style: GoogleFonts.plusJakartaSans(
-                              fontSize: 15,
+                              fontSize: 14,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF00A887),
                             ),
@@ -436,8 +372,8 @@ class PlusOfferScreen extends StatelessWidget {
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -459,7 +395,7 @@ class _KtpRequirementIcon extends StatelessWidget {
       ),
       child: Center(
         child: CustomPaint(
-          size: const Size(24, 24),
+          size: const Size(22, 22),
           painter: _KtpIconPainter(),
         ),
       ),
@@ -470,7 +406,7 @@ class _KtpRequirementIcon extends StatelessWidget {
 class _KtpIconPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    const color = Color(0xFF00A887);
+    const color = Color(0xFF0D9488);
     final strokePaint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
@@ -478,40 +414,40 @@ class _KtpIconPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
 
-    // 1. Badge body with rounded corners
+    // Body
     final rrect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(size.width * 0.16, size.height * 0.20, size.width * 0.68, size.height * 0.72),
-      const Radius.circular(5),
+      Rect.fromLTWH(size.width * 0.12, size.height * 0.18, size.width * 0.76, size.height * 0.74),
+      const Radius.circular(4.5),
     );
     canvas.drawRRect(rrect, strokePaint);
 
-    // 2. Top clip tabs
+    // Top loop
     canvas.drawLine(
-      Offset(size.width * 0.35, size.height * 0.08),
-      Offset(size.width * 0.35, size.height * 0.22),
+      Offset(size.width * 0.36, size.height * 0.06),
+      Offset(size.width * 0.36, size.height * 0.20),
       strokePaint,
     );
     canvas.drawLine(
-      Offset(size.width * 0.65, size.height * 0.08),
-      Offset(size.width * 0.65, size.height * 0.22),
+      Offset(size.width * 0.64, size.height * 0.06),
+      Offset(size.width * 0.64, size.height * 0.20),
       strokePaint,
     );
 
-    // 3. User head circle
+    // Head
     canvas.drawCircle(
-      Offset(size.width * 0.50, size.height * 0.45),
+      Offset(size.width * 0.50, size.height * 0.44),
       size.width * 0.14,
       strokePaint,
     );
 
-    // 4. User shoulders / torso arc
+    // Shoulders
     final shoulders = Path();
-    shoulders.moveTo(size.width * 0.28, size.height * 0.82);
+    shoulders.moveTo(size.width * 0.26, size.height * 0.80);
     shoulders.quadraticBezierTo(
       size.width * 0.50,
-      size.height * 0.64,
-      size.width * 0.72,
-      size.height * 0.82,
+      size.height * 0.62,
+      size.width * 0.74,
+      size.height * 0.80,
     );
     canvas.drawPath(shoulders, strokePaint);
   }
@@ -535,7 +471,7 @@ class _FaceRequirementIcon extends StatelessWidget {
       ),
       child: Center(
         child: CustomPaint(
-          size: const Size(24, 24),
+          size: const Size(22, 22),
           painter: _FaceScanPainter(),
         ),
       ),
@@ -546,7 +482,7 @@ class _FaceRequirementIcon extends StatelessWidget {
 class _FaceScanPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    const color = Color(0xFF00A887);
+    const color = Color(0xFF0D9488);
     final strokePaint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
@@ -558,23 +494,23 @@ class _FaceScanPainter extends CustomPainter {
       ..color = color
       ..style = PaintingStyle.fill;
 
-    const cornerLen = 5.5;
+    const cornerLen = 5.0;
 
     // Top-Left corner
-    canvas.drawLine(Offset(size.width * 0.16, size.height * 0.16 + cornerLen), Offset(size.width * 0.16, size.height * 0.16), strokePaint);
-    canvas.drawLine(Offset(size.width * 0.16, size.height * 0.16), Offset(size.width * 0.16 + cornerLen, size.height * 0.16), strokePaint);
+    canvas.drawLine(Offset(size.width * 0.14, size.height * 0.14 + cornerLen), Offset(size.width * 0.14, size.height * 0.14), strokePaint);
+    canvas.drawLine(Offset(size.width * 0.14, size.height * 0.14), Offset(size.width * 0.14 + cornerLen, size.height * 0.14), strokePaint);
 
     // Top-Right corner
-    canvas.drawLine(Offset(size.width * 0.84 - cornerLen, size.height * 0.16), Offset(size.width * 0.84, size.height * 0.16), strokePaint);
-    canvas.drawLine(Offset(size.width * 0.84, size.height * 0.16), Offset(size.width * 0.84, size.height * 0.16 + cornerLen), strokePaint);
+    canvas.drawLine(Offset(size.width * 0.86 - cornerLen, size.height * 0.14), Offset(size.width * 0.86, size.height * 0.14), strokePaint);
+    canvas.drawLine(Offset(size.width * 0.86, size.height * 0.14), Offset(size.width * 0.86, size.height * 0.14 + cornerLen), strokePaint);
 
     // Bottom-Left corner
-    canvas.drawLine(Offset(size.width * 0.16, size.height * 0.84 - cornerLen), Offset(size.width * 0.16, size.height * 0.84), strokePaint);
-    canvas.drawLine(Offset(size.width * 0.16, size.height * 0.84), Offset(size.width * 0.16 + cornerLen, size.height * 0.84), strokePaint);
+    canvas.drawLine(Offset(size.width * 0.14, size.height * 0.86 - cornerLen), Offset(size.width * 0.14, size.height * 0.86), strokePaint);
+    canvas.drawLine(Offset(size.width * 0.14, size.height * 0.86), Offset(size.width * 0.14 + cornerLen, size.height * 0.86), strokePaint);
 
     // Bottom-Right corner
-    canvas.drawLine(Offset(size.width * 0.84 - cornerLen, size.height * 0.84), Offset(size.width * 0.84, size.height * 0.84), strokePaint);
-    canvas.drawLine(Offset(size.width * 0.84, size.height * 0.84), Offset(size.width * 0.84, size.height * 0.84 - cornerLen), strokePaint);
+    canvas.drawLine(Offset(size.width * 0.86 - cornerLen, size.height * 0.86), Offset(size.width * 0.86, size.height * 0.86), strokePaint);
+    canvas.drawLine(Offset(size.width * 0.86, size.height * 0.86), Offset(size.width * 0.86, size.height * 0.86 - cornerLen), strokePaint);
 
     // Two Eyes
     canvas.drawCircle(Offset(size.width * 0.38, size.height * 0.44), 1.6, fillPaint);
@@ -582,12 +518,12 @@ class _FaceScanPainter extends CustomPainter {
 
     // Smiling Mouth
     final smile = Path();
-    smile.moveTo(size.width * 0.36, size.height * 0.58);
+    smile.moveTo(size.width * 0.36, size.height * 0.60);
     smile.quadraticBezierTo(
       size.width * 0.50,
-      size.height * 0.72,
+      size.height * 0.74,
       size.width * 0.64,
-      size.height * 0.58,
+      size.height * 0.60,
     );
     canvas.drawPath(smile, strokePaint);
   }

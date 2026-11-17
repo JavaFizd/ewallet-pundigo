@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../data/app_state.dart';
+import '../../widgets/common/in_app_notification.dart';
 
 /// ============================================================================
 /// HALAMAN PATUNGAN PINTAR (SMART SPLIT BILL MAKAN BARENG)
@@ -24,24 +26,25 @@ class PatunganPintarScreen extends StatefulWidget {
 
 class _PatunganPintarScreenState extends State<PatunganPintarScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _hasCreatedBill = false;
 
   // Nama Tempat Makan
   final TextEditingController _placeController = TextEditingController(text: 'Warung Nasi & Mie Aceh');
 
   // Daftar Teman Patungan
-  final List<String> _members = ['Dinda (Saya)', 'Rahmat Hidayat', 'Siti Aminah'];
+  final List<String> _members = ['Taufiq (Saya)', 'Rahmat Hidayat', 'Siti Aminah'];
   final Map<String, bool> _paidStatus = {
-    'Dinda (Saya)': true,
+    'Taufiq (Saya)': true,
     'Rahmat Hidayat': true,
     'Siti Aminah': false,
   };
 
   // Daftar Pesanan Menu (Siapa Makan Apa)
   final List<Map<String, dynamic>> _orderItems = [
-    {'name': 'Nasi Ayam Geprek Sambal Korek', 'price': 25000, 'person': 'Dinda (Saya)'},
+    {'name': 'Nasi Ayam Geprek Sambal Korek', 'price': 25000, 'person': 'Taufiq (Saya)'},
     {'name': 'Mie Aceh Spesial Daging', 'price': 35000, 'person': 'Rahmat Hidayat'},
     {'name': 'Nasi Goreng Kampung', 'price': 28000, 'person': 'Siti Aminah'},
-    {'name': 'Es Teh Manis Jumbo', 'price': 6000, 'person': 'Dinda (Saya)'},
+    {'name': 'Es Teh Manis Jumbo', 'price': 6000, 'person': 'Taufiq (Saya)'},
     {'name': 'Kopi Sanger Dingin', 'price': 14000, 'person': 'Rahmat Hidayat'},
     {'name': 'Jus Alpukat Kocok', 'price': 12000, 'person': 'Siti Aminah'},
   ];
@@ -137,24 +140,180 @@ class _PatunganPintarScreenState extends State<PatunganPintarScreen> with Single
     }
 
     buffer.writeln('💳 *Transfer pembayaran ke:*');
-    buffer.writeln('• *PundiGo*: 0822-7718-2910 (Dinda Syifa)');
-    buffer.writeln('• *Bank Aceh Syariah*: 010-02-123456-7 (Dinda Syifa)');
-    buffer.writeln('• *BSI*: 7123456789 (Dinda Syifa)');
+    buffer.writeln('• *PundiGo*: 0812-3456-789 (Taufiq)');
+    buffer.writeln('• *Bank Aceh Syariah*: 010-02-123456-7 (Taufiq)');
+    buffer.writeln('• *BSI*: 7123456789 (Taufiq)');
     buffer.writeln('Bisa juga scan QRIS PundiGo langsung ya. Makasih semuanya! 🙏✨');
 
     return buffer.toString();
   }
 
-  void _copyWhatsAppText() {
-    final text = _generateWhatsAppMessage();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('✓ Format pesan WhatsApp berhasil disalin! Tinggal tempel (paste) ke grup WA.'),
-        backgroundColor: Color(0xFF00A887),
-        duration: Duration(seconds: 3),
-      ),
+  Widget _buildStepRow(String num, String title, String desc) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 20,
+          height: 20,
+          decoration: const BoxDecoration(
+            color: Color(0xFF00A887),
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            num,
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              style: GoogleFonts.plusJakartaSans(fontSize: 11.5, color: const Color(0xFF334155), height: 1.3),
+              children: [
+                TextSpan(text: '$title: ', style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                TextSpan(text: desc),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
+  }
+
+  void _sharePatunganLink() {
+    const link = 'http://localhost:8888/#/shared-patungan';
+    Clipboard.setData(const ClipboardData(text: link));
+    InAppNotification.show(
+      context,
+      title: 'Tautan Patungan Berhasil Disalin!',
+      message: 'Link tagihan patungan siap dibagikan ke teman: $link',
+      icon: Icons.link_rounded,
+      iconColor: const Color(0xFF00A887),
+      iconBg: const Color(0xFFE6F8F5),
+    );
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.all(22),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFCBD5E1),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE0F7F4),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(Icons.link_rounded, color: Color(0xFF00A887), size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Tautan Tagihan Patungan',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF0F172A),
+                          ),
+                        ),
+                        Text(
+                          'Tautan sudah otomatis disalin ke clipboard',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            color: const Color(0xFF64748B),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.language_rounded, size: 16, color: Color(0xFF00A887)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        link,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF0F172A),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00A887),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    Navigator.of(context).pushNamed('/shared-patungan');
+                  },
+                  icon: const Icon(Icons.visibility_rounded, color: Colors.white, size: 18),
+                  label: Text(
+                    '🌐 Buka Tampilan Teman yang Membayar',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _copyWhatsAppText() {
+    _sharePatunganLink();
   }
 
   // Dialog Simulasi Pindai Struk Kasir (Solusi Lupa Pesan Apa)
@@ -373,6 +532,137 @@ class _PatunganPintarScreenState extends State<PatunganPintarScreen> with Single
 
   @override
   Widget build(BuildContext context) {
+    final user = AppState.instance.user;
+    final bool isTaufiq = user.name.toLowerCase().contains('taufiq');
+    final bool showEmpty = !isTaufiq && !_hasCreatedBill;
+
+    if (showEmpty) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFF8FAFC),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF0F172A), size: 18),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: Text(
+            'Patungan Pintar (Split Bill)',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF0F172A),
+            ),
+          ),
+        ),
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(28),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 90,
+                    height: 90,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE6F8F5),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF00A887).withOpacity(0.18),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.receipt_long_rounded,
+                      color: Color(0xFF00A887),
+                      size: 46,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Belum Ada Patungan Aktif',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF0F172A),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Akun baru Anda belum memiliki riwayat atau tagihan patungan. Pindai struk makan atau buat tagihan bagi rata bersama teman untuk memulainya.',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      color: const Color(0xFF64748B),
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00A887),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 2,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _hasCreatedBill = true;
+                        });
+                        _simulateScanReceipt();
+                      },
+                      icon: const Icon(Icons.document_scanner_rounded, color: Colors.white, size: 20),
+                      label: Text(
+                        '📸 Pindai Struk & Mulai Patungan',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF00A887),
+                        side: const BorderSide(color: Color(0xFF00A887)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _hasCreatedBill = true;
+                        });
+                      },
+                      icon: const Icon(Icons.edit_note_rounded, size: 20),
+                      label: Text(
+                        '✍️ Buat Tagihan Manual',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     final calculations = _perPersonCalculation;
 
     return Scaffold(
@@ -395,15 +685,57 @@ class _PatunganPintarScreenState extends State<PatunganPintarScreen> with Single
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share_rounded, color: Color(0xFF00A887)),
-            tooltip: 'Salin Teks WhatsApp',
-            onPressed: _copyWhatsAppText,
+            icon: const Icon(Icons.link_rounded, color: Color(0xFF00A887)),
+            tooltip: 'Bagikan Link Patungan',
+            onPressed: _sharePatunganLink,
           ),
         ],
       ),
       body: SafeArea(
         child: Column(
           children: [
+            // =================================================================
+            // PANDUAN CARA KERJA PATUNGAN PINTAR (SUPER MUDAH LEVEL ANAK SD)
+            // =================================================================
+            Container(
+              margin: const EdgeInsets.fromLTRB(20, 10, 20, 4),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFE6F8F5), Color(0xFFEFF6FF)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFF00BFA5).withOpacity(0.35)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.bolt_rounded, color: Color(0xFF00897B), size: 18),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Alur Patungan Pintar (3 Langkah Beres)',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFF00796B),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  _buildStepRow('1', 'Pilih Menu / Bagi Rata', 'Tentukan siapa makan apa atau bagi sama rata secara otomatis.'),
+                  const SizedBox(height: 5),
+                  _buildStepRow('2', 'Bagikan Link Saja', 'Klik tombol hijau di bawah untuk salin tautan tagihan ke teman.'),
+                  const SizedBox(height: 5),
+                  _buildStepRow('3', 'Teman Bayar & Lunas', 'Teman buka tautan, bayar bagiannya, dan saldo otomatis masuk ke kas/akun Anda!'),
+                ],
+              ),
+            ),
+
             // Tab Selector: Siapa Makan Apa vs Bagi Rata
             Container(
               margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -933,15 +1265,15 @@ class _PatunganPintarScreenState extends State<PatunganPintarScreen> with Single
                   ),
                   const SizedBox(width: 12),
 
-                  // Tombol Utama Kirim WhatsApp
+                  // Tombol Utama Bagikan Link Patungan (Hanya Opsi Link Sesuai Permintaan)
                   Expanded(
                     child: SizedBox(
                       height: 50,
                       child: ElevatedButton.icon(
-                        onPressed: _copyWhatsAppText,
-                        icon: const Icon(Icons.chat_rounded, color: Colors.white, size: 20),
+                        onPressed: _sharePatunganLink,
+                        icon: const Icon(Icons.link_rounded, color: Colors.white, size: 20),
                         label: Text(
-                          'Kirim Rincian ke WhatsApp',
+                          '🔗 Salin & Bagikan Link Patungan',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
@@ -949,7 +1281,7 @@ class _PatunganPintarScreenState extends State<PatunganPintarScreen> with Single
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF25D366),
+                          backgroundColor: const Color(0xFF00A887),
                           elevation: 0,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         ),

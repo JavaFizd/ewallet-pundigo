@@ -38,7 +38,11 @@ class BalanceHeader extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF079C76), Color(0xFF2EA1D8)],
+          colors: [
+            Color(0xFF00A887),
+            Color(0xFF00BFA5),
+            Color(0xFF1E88E5),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -46,37 +50,8 @@ class BalanceHeader extends StatelessWidget {
           bottom: Radius.circular(28),
         ),
       ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          // Pendaran Cahaya Halus di Latar Belakang Gradien
-          Positioned(
-            top: -30,
-            right: -20,
-            child: Container(
-              width: 170,
-              height: 170,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.08),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -40,
-            left: -30,
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.05),
-              ),
-            ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 52, 16, 78),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 42, 16, 76),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -134,7 +109,7 @@ class BalanceHeader extends StatelessWidget {
                                             ),
                                           ),
                                           child: Text(
-                                            'MEMBER BARU',
+                                            user.isPlus ? 'PLUS MEMBER' : 'MEMBER BARU',
                                             style: GoogleFonts.plusJakartaSans(
                                               color: Colors.white,
                                               fontSize: 9.5,
@@ -147,7 +122,9 @@ class BalanceHeader extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      'Selamat datang di PundiGo!',
+                                      user.isPlus
+                                          ? 'Senang melihatmu kembali!'
+                                          : 'Selamat datang di PundiGo!',
                                       style: GoogleFonts.plusJakartaSans(
                                         color: Colors.white.withOpacity(0.92),
                                         fontSize: 12.5,
@@ -163,7 +140,7 @@ class BalanceHeader extends StatelessWidget {
                       ),
                     ),
 
-                    // Tombol Notifikasi Lonceng (Persis Figma DASHBOARD-3.png)
+                    // Tombol Notifikasi Lonceng (Bersih tanpa bulatan)
                     InkWell(
                       onTap: onNotificationTap ?? () {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -171,24 +148,20 @@ class BalanceHeader extends StatelessWidget {
                         );
                       },
                       borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.22),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
+                      child: const SizedBox(
+                        width: 36,
+                        height: 36,
+                        child: Icon(
                           Icons.notifications_none_rounded,
                           color: Colors.white,
-                          size: 21,
+                          size: 24,
                         ),
                       ),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 22),
+                const SizedBox(height: 10),
 
                 // -------------------------------------------------------------
                 // Baris 2: Label Saldo Utama & Tombol Dompet
@@ -244,7 +217,7 @@ class BalanceHeader extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
 
                 // -------------------------------------------------------------
                 // Baris 3: Angka Saldo Utama (Persis Figma: 'Rp100.000' tanpa spasi)
@@ -261,7 +234,7 @@ class BalanceHeader extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
 
                 // -------------------------------------------------------------
                 // Baris 4: Badge Akun Basic (Persis Figma DASHBOARD-3.png)
@@ -298,8 +271,6 @@ class BalanceHeader extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
     );
   }
 }
