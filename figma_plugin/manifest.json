@@ -1,8 +1,9 @@
 {
-  "name": "PundiGo Design Generator",
+  "name": "PundiGo 100% Visual Polish",
   "id": "pundigo-design-generator",
   "api": "1.0.0",
   "main": "code.js",
+  "documentAccess": "dynamic-page",
   "capabilities": [],
   "enableProposedApi": false,
   "editorType": ["figma"]
