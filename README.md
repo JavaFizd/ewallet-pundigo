@@ -7,14 +7,23 @@ PundiGo! adalah aplikasi dompet digital berbasis Flutter yang dirancang khusus u
 
 ## 🚀 Cara Menjalankan Aplikasi (Untuk Anggota Kelompok)
 
-Pastikan Flutter SDK sudah terpasang di komputer Anda. Jalankan perintah berikut di terminal:
+### Opsi 1: Paling Mudah (Tinggal Klik 2x untuk Windows) ⭐
+Jika kamu mendownload file ZIP:
+1. Ekstrak file ZIP-nya.
+2. Buka foldernya, lalu **klik dua kali (double click) file `JALANKAN_PUNDIGO.bat`**.
+3. File ini akan otomatis mengunduh dependensi (`flutter pub get`) dan langsung membuka aplikasi di Google Chrome!
+
+---
+
+### Opsi 2: Menggunakan Terminal / VS Code
+Buka terminal di folder project, lalu jalankan:
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/JavaFizd/mobile-pundigo.git
-cd mobile-pundigo
+# 1. Clone repository (jika menggunakan Git)
+git clone https://github.com/JavaFizd/pundigo-project.git
+cd pundigo-project
 
-# 2. Unduh semua dependensi paket
+# 2. Unduh semua dependensi paket (menghilangkan garis merah di editor)
 flutter pub get
 
 # 3. Jalankan aplikasi di browser (Google Chrome)

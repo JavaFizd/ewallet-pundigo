@@ -24,10 +24,7 @@ import '../../widgets/common/pundigo_background.dart';
 class SharedKasScreen extends StatefulWidget {
   final String kasId;
 
-  const SharedKasScreen({
-    super.key,
-    this.kasId = 'kas_rpl_03',
-  });
+  const SharedKasScreen({super.key, this.kasId = 'kas_rpl_03'});
 
   @override
   State<SharedKasScreen> createState() => _SharedKasScreenState();
@@ -55,10 +52,15 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
               // 1. SIMULASI URL BROWSER / DEEP LINK HEADER
               // ===============================================================
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF1F5F9),
-                  border: Border(bottom: BorderSide(color: const Color(0xFFE2E8F0))),
+                  border: Border(
+                    bottom: BorderSide(color: const Color(0xFFE2E8F0)),
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -67,13 +69,20 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                       borderRadius: BorderRadius.circular(8),
                       child: const Padding(
                         padding: EdgeInsets.all(4),
-                        child: Icon(Icons.arrow_back_rounded, size: 18, color: Color(0xFF475569)),
+                        child: Icon(
+                          Icons.arrow_back_rounded,
+                          size: 18,
+                          color: Color(0xFF475569),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
@@ -81,7 +90,11 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.lock_rounded, size: 13, color: Color(0xFF16A34A)),
+                            const Icon(
+                              Icons.lock_rounded,
+                              size: 13,
+                              color: Color(0xFF16A34A),
+                            ),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
@@ -117,16 +130,25 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                       // Badge Undangan Kas
                       Center(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 5,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFE0F7F4),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: const Color(0xFF00BFA5).withOpacity(0.35)),
+                            border: Border.all(
+                              color: const Color(0xFF00BFA5).withOpacity(0.35),
+                            ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.groups_rounded, size: 14, color: Color(0xFF00A887)),
+                              const Icon(
+                                Icons.groups_rounded,
+                                size: 14,
+                                color: Color(0xFF00A887),
+                              ),
                               const SizedBox(width: 6),
                               Text(
                                 'Saku Kas Kelompok Terbuka PundiGo!',
@@ -170,7 +192,11 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    const Icon(Icons.folder_shared_rounded, color: Colors.white, size: 20),
+                                    const Icon(
+                                      Icons.folder_shared_rounded,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
                                     const SizedBox(width: 8),
                                     Text(
                                       kas.title,
@@ -183,7 +209,10 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                                   ],
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 3,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.white.withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(10),
@@ -225,11 +254,18 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                               children: [
                                 Text(
                                   'Progres Target (Rp 500.000)',
-                                  style: GoogleFonts.plusJakartaSans(fontSize: 11.5, color: Colors.white.withOpacity(0.9)),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 11.5,
+                                    color: Colors.white.withOpacity(0.9),
+                                  ),
                                 ),
                                 Text(
                                   '${(progress * 100).toInt()}%',
-                                  style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.white),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ],
                             ),
@@ -240,7 +276,9 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                                 value: progress,
                                 minHeight: 6,
                                 backgroundColor: Colors.white.withOpacity(0.25),
-                                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                               ),
                             ),
                           ],
@@ -301,7 +339,11 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(Icons.add_circle_outline_rounded, color: Colors.white, size: 18),
+                                const Icon(
+                                  Icons.add_circle_outline_rounded,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   'Setor Rp ${_selectedAmount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} Sekarang',
@@ -324,7 +366,9 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                         OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(color: Color(0xFF00A887)),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                             minimumSize: const Size(double.infinity, 46),
                           ),
                           onPressed: () {
@@ -333,12 +377,18 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                             });
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Selamat! Anda telah bergabung ke Saku Kelompok 3 RPL.'),
+                                content: Text(
+                                  'Selamat! Anda telah bergabung ke Saku Kelompok 3 RPL.',
+                                ),
                                 backgroundColor: Color(0xFF00A887),
                               ),
                             );
                           },
-                          icon: const Icon(Icons.person_add_alt_1_rounded, color: Color(0xFF00A887), size: 18),
+                          icon: const Icon(
+                            Icons.person_add_alt_1_rounded,
+                            color: Color(0xFF00A887),
+                            size: 18,
+                          ),
                           label: Text(
                             'Gabung Menjadi Anggota Kas Ini',
                             style: GoogleFonts.plusJakartaSans(
@@ -360,7 +410,11 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.check_circle_rounded, color: Color(0xFF16A34A), size: 16),
+                                const Icon(
+                                  Icons.check_circle_rounded,
+                                  color: Color(0xFF16A34A),
+                                  size: 16,
+                                ),
                                 const SizedBox(width: 6),
                                 Text(
                                   'Anda Sudah Bergabung sebagai Anggota ✓',
@@ -392,7 +446,10 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF1F5F9),
                               borderRadius: BorderRadius.circular(8),
@@ -423,7 +480,9 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                             decoration: BoxDecoration(
                               color: const Color(0xFFF8FAFC),
                               borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              border: Border.all(
+                                color: const Color(0xFFE2E8F0),
+                              ),
                             ),
                             child: Row(
                               children: [
@@ -433,12 +492,17 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
                                     color: const Color(0xFFDCFCE7),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: const Icon(Icons.arrow_downward_rounded, color: Color(0xFF16A34A), size: 16),
+                                  child: const Icon(
+                                    Icons.arrow_downward_rounded,
+                                    color: Color(0xFF16A34A),
+                                    size: 16,
+                                  ),
                                 ),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         item.title,
@@ -495,10 +559,14 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFE0F7F4) : const Color(0xFFF8FAFC),
+            color: isSelected
+                ? const Color(0xFFE0F7F4)
+                : const Color(0xFFF8FAFC),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? const Color(0xFF00BFA5) : const Color(0xFFCBD5E1),
+              color: isSelected
+                  ? const Color(0xFF00BFA5)
+                  : const Color(0xFFCBD5E1),
               width: isSelected ? 1.6 : 1,
             ),
           ),
@@ -508,7 +576,9 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                color: isSelected ? const Color(0xFF00796B) : const Color(0xFF334155),
+                color: isSelected
+                    ? const Color(0xFF00796B)
+                    : const Color(0xFF334155),
               ),
             ),
           ),
@@ -527,11 +597,12 @@ class _SharedKasScreenState extends State<SharedKasScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Terima kasih! Iuran Rp ${_selectedAmount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} berhasil disetor ke Kas Kelompok.'),
+        content: Text(
+          'Terima kasih! Iuran Rp ${_selectedAmount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} berhasil disetor ke Kas Kelompok.',
+        ),
         backgroundColor: const Color(0xFF00A887),
         behavior: SnackBarBehavior.floating,
       ),
     );
   }
 }
-
