@@ -12,8 +12,21 @@ import '../models/feature_models.dart';
 ///   digunakan pada tahap integrasi backend berikutnya.
 /// ============================================================================
 class DummyData {
-  // Profil Pengguna Utama (Akun Terdaftar: topikpanas@gmail.com / 08123456789 / PIN 171717)
+  // Profil Pengguna Awal (Akun Baru / Persona Dinda Syahfitri - Sesuai Figma Frame 01-16)
   static UserModel currentUser = UserModel(
+    id: 'user_new',
+    name: 'Dinda Syahfitri',
+    phone: '0812-3456-7890',
+    email: 'dinda.syahfitri@gmail.com',
+    initials: 'DS',
+    accountType: 'Akun Basic',
+    saldoUtama: 0,
+    saldoDompet: 0,
+    pin: '123456',
+  );
+
+  // Profil Pengguna Demo / Power User (Taufiq - Akun Plus Terverifikasi)
+  static UserModel taufiqUser = UserModel(
     id: 'user_001',
     name: 'Taufiq',
     phone: '08123456789',

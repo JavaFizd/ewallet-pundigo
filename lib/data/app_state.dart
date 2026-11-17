@@ -21,38 +21,16 @@ class AppState extends ChangeNotifier {
 
   UserModel _user = DummyData.currentUser;
   bool _isBalanceVisible = true;
-  bool _isNewAccount = false;
-  final List<TransactionModel> _transactions = List.from(DummyData.initialTransactions);
-  KasKelompokModel _kasKelompok = DummyData.defaultKas;
-  final List<KasMutasiModel> _kasMutasi = [
-    KasMutasiModel(
-      title: 'Beli ATK & Print Makalah',
-      subtitle: 'Nota No. 0429 • Fotokopi Kampus',
-      amount: 35000,
-      isIncome: false,
-      date: DateTime.now().subtract(const Duration(days: 1)),
-      hasReceipt: true,
-      uploader: 'Taufiq (Bendahara)',
-    ),
-    KasMutasiModel(
-      title: 'Iuran Kas: Rahmat Hidayat',
-      subtitle: 'Transfer via PundiGo!',
-      amount: 25000,
-      isIncome: true,
-      date: DateTime.now().subtract(const Duration(days: 2)),
-      hasReceipt: false,
-      uploader: 'Rahmat Hidayat',
-    ),
-    KasMutasiModel(
-      title: 'Iuran Kas: Maya Lestari',
-      subtitle: 'Transfer via Bank Aceh',
-      amount: 25000,
-      isIncome: true,
-      date: DateTime.now().subtract(const Duration(days: 3)),
-      hasReceipt: false,
-      uploader: 'Maya Lestari',
-    ),
-  ];
+  bool _isNewAccount = true;
+  final List<TransactionModel> _transactions = [];
+  KasKelompokModel _kasKelompok = KasKelompokModel(
+    id: 'kas_empty',
+    title: 'Belum Ada Kas',
+    memberCount: 0,
+    collectedAmount: 0,
+    targetAmount: 0,
+  );
+  final List<KasMutasiModel> _kasMutasi = [];
 
   // Getters
   UserModel get user => _user;
