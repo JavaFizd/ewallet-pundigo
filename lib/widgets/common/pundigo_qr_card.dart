@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import '../../core/utils/currency_formatter.dart';
-import 'pg_logo.dart';
 
 /// ============================================================================
 /// KOMPONEN KARTU KODE QR PUNDIGO DENGAN LOGO DI TENGAH (PREMIUM QRIS DESIGN)
@@ -25,17 +23,6 @@ class PundigoQrCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Generate valid EMVCo QRIS payload
-    final nominalStr = (nominal != null && nominal! > 0) ? nominal!.toInt().toString() : '0';
-    final nominalTag = nominalStr != '0' 
-        ? '54${nominalStr.length.toString().padLeft(2, '0')}$nominalStr' 
-        : '54010';
-    final nameLen = userName.length.toString().padLeft(2, '0');
-    final qrData = '00020101021226600016ID.CO.PUNDIGO.WWW01189360000201800288520458125303360'
-        '$nominalTag'
-        '5802ID59$nameLen$userName'
-        '6007JAKARTA62070703A016304ABCD';
-
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(

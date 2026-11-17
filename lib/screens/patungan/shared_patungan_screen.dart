@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../data/app_state.dart';
 import '../../widgets/common/numeric_keyboard.dart';
 import '../../widgets/common/pg_logo.dart';

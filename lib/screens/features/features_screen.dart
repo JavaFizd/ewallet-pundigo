@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../data/app_state.dart';
 import '../../widgets/common/custom_app_bar.dart';
-import '../../widgets/common/plus_upgrade_dialog.dart';
 import '../../widgets/home/promo_banner.dart';
 import '../../widgets/home/quick_actions.dart';
 import '../../widgets/home/smart_feature_card.dart';

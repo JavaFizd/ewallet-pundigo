@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../data/app_state.dart';
-import '../../models/feature_models.dart';
 import '../../widgets/common/pg_logo.dart';
 import '../../widgets/common/pundigo_background.dart';
 

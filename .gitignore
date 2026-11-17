@@ -51,6 +51,7 @@ app.*.map.json
 /*.png
 /*.html
 /*.bat
+!/JALANKAN_PUNDIGO.bat
 /*.py
 /figma_designs/
 /figma_export/

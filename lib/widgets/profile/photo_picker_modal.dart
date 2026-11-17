@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
-import '../../data/app_state.dart';
 import '../../models/user_model.dart';
-import '../common/user_avatar.dart';
 
 /// ============================================================================
 /// MODAL PILIH / UBAH FOTO PROFIL PUNDIGO!

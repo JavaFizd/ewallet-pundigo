@@ -5,7 +5,6 @@ import '../../widgets/common/custom_app_bar.dart';
 import '../../widgets/common/user_avatar.dart';
 import '../auth/login_screen.dart';
 import '../kyc/kyc_ktp_guide_screen.dart';
-import '../auth/register_screen.dart';
 import 'edit_profile_screen.dart';
 import 'help_center_screen.dart';
 import 'change_pin_screen.dart';

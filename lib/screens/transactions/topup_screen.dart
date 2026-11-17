@@ -4,7 +4,6 @@ import '../../core/utils/currency_formatter.dart';
 import '../../data/app_state.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/plus_upgrade_dialog.dart';
-import 'topup_success_screen.dart';
 import 'transaction_receipt_screen.dart';
 
 /// ============================================================================

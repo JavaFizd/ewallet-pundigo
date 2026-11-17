@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../widgets/common/pg_logo.dart';
 import 'patungan_payment_screen.dart';
 
