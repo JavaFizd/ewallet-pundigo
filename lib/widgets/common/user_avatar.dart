@@ -67,7 +67,7 @@ class UserAvatar extends StatelessWidget {
           radius: radius,
           backgroundColor: backgroundColor ?? defaultBg,
           backgroundImage: imgProvider,
-          onBackgroundImageError: (_, __) {},
+          onBackgroundImageError: (_, _) {},
         );
       } else {
         avatarContent = _buildInitials(initials, defaultBg, defaultText);

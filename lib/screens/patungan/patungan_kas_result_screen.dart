@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../data/app_state.dart';
 import '../../widgets/common/pg_logo.dart';
 import '../main_navigation_screen.dart';
 import 'shared_kas_screen.dart';
@@ -36,10 +35,6 @@ class PatunganKasResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = AppState.instance;
-    final kas = appState.kasKelompok;
-    final mutasiList = appState.kasMutasi;
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

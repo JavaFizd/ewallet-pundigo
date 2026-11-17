@@ -2,17 +2,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "PundiGo (Android Emulator / Mobile)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart"
+    },
+    {
       "name": "PundiGo (Web Chrome)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
       "args": ["-d", "chrome"]
-    },
-    {
-      "name": "PundiGo (Mobile / Emulator)",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main.dart"
     }
   ]
 }

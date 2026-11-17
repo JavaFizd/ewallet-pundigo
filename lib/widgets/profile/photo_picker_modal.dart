@@ -296,7 +296,7 @@ class PhotoPickerModal extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: presetAvatars.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 14),
+              separatorBuilder: (_, _) => const SizedBox(width: 14),
               itemBuilder: (ctx, index) {
                 final preset = presetAvatars[index];
                 final url = preset['url']!;

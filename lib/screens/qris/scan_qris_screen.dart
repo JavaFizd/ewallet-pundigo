@@ -23,7 +23,7 @@ class ScanQrisScreen extends StatefulWidget {
   State<ScanQrisScreen> createState() => _ScanQrisScreenState();
 }
 
-class _ScanQrisScreenState extends State<ScanQrisScreen> with SingleTickerProviderStateMixin {
+class _ScanQrisScreenState extends State<ScanQrisScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   late AnimationController _laserController;
   bool _isFlashOn = false;
@@ -1029,9 +1029,15 @@ class _ScanQrisScreenState extends State<ScanQrisScreen> with SingleTickerProvid
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.qr_code_scanner_rounded, size: 18),
-                        SizedBox(width: 8),
-                        Text('Pindai QRIS'),
+                        Icon(Icons.qr_code_scanner_rounded, size: 17),
+                        SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            'Pindai QRIS',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -1040,9 +1046,15 @@ class _ScanQrisScreenState extends State<ScanQrisScreen> with SingleTickerProvid
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.qr_code_2_rounded, size: 18),
-                        SizedBox(width: 8),
-                        Text('Kode QR Saya'),
+                        Icon(Icons.qr_code_2_rounded, size: 17),
+                        SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            'Kode QR Saya',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -1078,7 +1090,8 @@ class _ScanQrisScreenState extends State<ScanQrisScreen> with SingleTickerProvid
 
           // Badge Instruksi
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
@@ -1088,12 +1101,16 @@ class _ScanQrisScreenState extends State<ScanQrisScreen> with SingleTickerProvid
               children: [
                 const Icon(Icons.crop_free_rounded, color: Color(0xFF69F0AE), size: 16),
                 const SizedBox(width: 8),
-                Text(
-                  'Arahkan kamera ke kode QRIS pembayaran',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                Flexible(
+                  child: Text(
+                    'Arahkan kamera ke kode QRIS pembayaran',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],

@@ -547,41 +547,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String? trailingText,
     required VoidCallback onTap,
   }) {
-    return ListTile(
-      onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-      leading: Container(
-        width: 38,
-        height: 38,
-        decoration: BoxDecoration(
-          color: iconBg,
-          shape: BoxShape.circle,
+    return Material(
+      type: MaterialType.transparency,
+      child: ListTile(
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+        leading: Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: iconBg,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: iconColor, size: 20),
         ),
-        child: Icon(icon, color: iconColor, size: 20),
-      ),
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
         ),
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (trailingText != null)
-            Text(
-              trailingText,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textMuted,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (trailingText != null)
+              Text(
+                trailingText,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textMuted,
+                ),
               ),
-            ),
-          const SizedBox(width: 4),
-          const Icon(Icons.chevron_right, color: AppColors.textMuted, size: 20),
-        ],
+            const SizedBox(width: 4),
+            const Icon(Icons.chevron_right, color: AppColors.textMuted, size: 20),
+          ],
+        ),
       ),
     );
   }

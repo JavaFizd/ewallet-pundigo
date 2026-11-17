@@ -404,49 +404,52 @@ class _RequestBalanceScreenState extends State<RequestBalanceScreen> with Single
                   final isSelected = _selectedContact?['phone'] == contact['phone'];
                   final color = Color(int.parse(contact['color']!));
 
-                  return ListTile(
-                    onTap: () {
-                      setState(() {
-                        _selectedContact = contact;
-                      });
-                    },
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    leading: CircleAvatar(
-                      radius: 20,
-                      backgroundColor: color.withOpacity(0.15),
-                      child: Text(
-                        contact['avatar']!,
+                  return Material(
+                    type: MaterialType.transparency,
+                    child: ListTile(
+                      onTap: () {
+                        setState(() {
+                          _selectedContact = contact;
+                        });
+                      },
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      leading: CircleAvatar(
+                        radius: 20,
+                        backgroundColor: color.withOpacity(0.15),
+                        child: Text(
+                          contact['avatar']!,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w800,
+                            color: color,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        contact['name']!,
                         style: GoogleFonts.plusJakartaSans(
-                          fontWeight: FontWeight.w800,
-                          color: color,
-                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13.5,
+                          color: const Color(0xFF0F172A),
                         ),
                       ),
-                    ),
-                    title: Text(
-                      contact['name']!,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13.5,
-                        color: const Color(0xFF0F172A),
+                      subtitle: Text(
+                        contact['phone']!,
+                        style: GoogleFonts.plusJakartaSans(fontSize: 11.5, color: const Color(0xFF64748B)),
                       ),
-                    ),
-                    subtitle: Text(
-                      contact['phone']!,
-                      style: GoogleFonts.plusJakartaSans(fontSize: 11.5, color: const Color(0xFF64748B)),
-                    ),
-                    trailing: Container(
-                      width: 22,
-                      height: 22,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isSelected ? const Color(0xFF00796B) : Colors.transparent,
-                        border: Border.all(
-                          color: isSelected ? const Color(0xFF00796B) : const Color(0xFFCBD5E1),
-                          width: 2,
+                      trailing: Container(
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isSelected ? const Color(0xFF00796B) : Colors.transparent,
+                          border: Border.all(
+                            color: isSelected ? const Color(0xFF00796B) : const Color(0xFFCBD5E1),
+                            width: 2,
+                          ),
                         ),
+                        child: isSelected ? const Icon(Icons.check, size: 14, color: Colors.white) : null,
                       ),
-                      child: isSelected ? const Icon(Icons.check, size: 14, color: Colors.white) : null,
                     ),
                   );
                 },

@@ -89,7 +89,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             const SnackBar(
               content: Text('Foto profil berhasil dipilih!'),
               backgroundColor: AppColors.success,
-              duration: const Duration(seconds: 2),
+              duration: Duration(seconds: 2),
             ),
           );
         }

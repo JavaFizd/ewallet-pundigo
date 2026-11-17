@@ -820,7 +820,7 @@ class TransactionReceiptScreen extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildDynamicDetails(user, String trxDate, String refNumber) {
+  List<Widget> _buildDynamicDetails(dynamic user, String trxDate, String refNumber) {
     final List<Widget> rows = [];
 
     void addRow(String label, String value, {String? subtitle, Color? valueColor, String? logoAsset}) {
