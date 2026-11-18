@@ -1255,11 +1255,11 @@ async function run() {
   }
 
   // ============================================================================
-  // ROW 09: TAMBAHAN UPDATE FITUR SCAN & MASUKKAN e-KTP SINKRON FOTO PROFIL (81-84)
+  // ROW 09: TAMBAHAN UPDATE FITUR SCAN e-KTP & BERANDA CAROUSEL PROMO (81-85)
   // ============================================================================
   let maxY = 0;
   for (const n of mainPage.children) {
-    if (n.type === 'FRAME' && n.name.indexOf('81 - ') !== 0 && n.name.indexOf('82 - ') !== 0 && n.name.indexOf('83 - ') !== 0 && n.name.indexOf('84 - ') !== 0) {
+    if (n.type === 'FRAME' && n.name.indexOf('81 - ') !== 0 && n.name.indexOf('82 - ') !== 0 && n.name.indexOf('83 - ') !== 0 && n.name.indexOf('84 - ') !== 0 && n.name.indexOf('85 - ') !== 0) {
       const bottom = n.y + n.height;
       if (bottom > maxY) maxY = bottom;
     }
@@ -1284,8 +1284,10 @@ async function run() {
 
   let row9Lbl = mainPage.children.find(function (n) { return n.type === 'TEXT' && n.characters.indexOf('ROW 09') === 0; });
   if (!row9Lbl) {
-    row9Lbl = makeText('ROW 09 — UPDATE FITUR SCAN & MASUKKAN e-KTP SINKRON FOTO PROFIL (81–84)', 22, 'ExtraBold', '#0F172A');
+    row9Lbl = makeText('ROW 09 — UPDATE FITUR SCAN e-KTP & BERANDA CAROUSEL PROMO (81–85)', 22, 'ExtraBold', '#0F172A');
     mainPage.appendChild(row9Lbl);
+  } else {
+    await safeSetText(row9Lbl, 'ROW 09 — UPDATE FITUR SCAN e-KTP & BERANDA CAROUSEL PROMO (81–85)');
   }
   row9Lbl.x = 0; row9Lbl.y = ROW9_Y - 56;
 
@@ -1550,8 +1552,75 @@ async function run() {
     stats.rebuiltScreens++;
   }
 
+  // --- 85: Beranda Dinda Basic + Carousel Promo Banner — 100% persis 85.jpeg ---
+  {
+    const f85 = getOrCreateRow9Frame(4, '85 - Beranda Dinda Basic (Carousel Promo Banner)');
+    f85.fills = [solid('#FFFFFF')];
+
+    const hdr = figma.createFrame(); hdr.resize(480, 260); hdr.bottomLeftRadius = 28; hdr.bottomRightRadius = 28;
+    hdr.fills = [grad('#00BFA5', '#1E88E5')]; f85.appendChild(hdr);
+    const hCol = mkAL('VERTICAL', { gap: 16, px: 22, pt: 22, pb: 48 }); hCol.resize(480, 260); hdr.appendChild(hCol);
+
+    const uRow = mkAL('HORIZONTAL', { gap: 12, cross: 'CENTER' }); hCol.appendChild(uRow); uRow.layoutSizingHorizontal = 'FILL';
+    const av = mkAL('HORIZONTAL', { main: 'CENTER', cross: 'CENTER', r: 22, bg: '#DCE4FD' }); av.resize(44, 44);
+    av.appendChild(makeText('DS', 16, 'ExtraBold', '#1E3A8A')); uRow.appendChild(av);
+    const ui = mkAL('VERTICAL', { gap: 2 }); uRow.appendChild(ui); ui.layoutSizingHorizontal = 'FILL';
+    const nl = mkAL('HORIZONTAL', { gap: 8, cross: 'CENTER' });
+    nl.appendChild(makeText('Halo, Dinda!', 17.5, 'ExtraBold', '#FFFFFF'));
+    const mb = mkAL('HORIZONTAL', { px: 9, py: 2.5, r: 10, bg: '#FFFFFF', bgOp: 0.16, border: '#FFFFFF', borderOp: 0.35 });
+    mb.appendChild(makeText('MEMBER BARU', 9.5, 'ExtraBold', '#FFFFFF')); nl.appendChild(mb);
+    ui.appendChild(nl); ui.appendChild(makeText('Selamat datang di PundiGo!', 12.5, 'Regular', '#FFFFFF', { op: 0.92 }));
+    uRow.appendChild(icSvg(P.bell, '#FFFFFF', 22));
+
+    const bRow = mkAL('HORIZONTAL', { main: 'SPACE_BETWEEN', cross: 'CENTER' }); hCol.appendChild(bRow); bRow.layoutSizingHorizontal = 'FILL';
+    const bl = mkAL('VERTICAL', { gap: 5 });
+    const sl = mkAL('HORIZONTAL', { gap: 6, cross: 'CENTER' });
+    sl.appendChild(makeText('Saldo Utama', 13, 'Medium', '#FFFFFF', { op: 0.92 })); sl.appendChild(icSvg(P.eye, '#FFFFFF', 15)); bl.appendChild(sl);
+    bl.appendChild(makeText('Rp0', 36, 'ExtraBold', '#FFFFFF'));
+    const ap = mkAL('HORIZONTAL', { px: 12, py: 4.5, r: 14, bg: '#FFFFFF' });
+    ap.appendChild(makeText('● Akun Basic', 11.5, 'ExtraBold', '#2563EB')); bl.appendChild(ap);
+    bRow.appendChild(bl);
+    const dm = mkAL('HORIZONTAL', { gap: 6, cross: 'CENTER' });
+    dm.appendChild(icSvg(P.wallet, '#FFFFFF', 16)); dm.appendChild(makeText('Dompet', 13.5, 'Bold', '#FFFFFF')); bRow.appendChild(dm);
+
+    const qa = makeQuickActionsCard(); qa.x = 22; qa.y = 220; f85.appendChild(qa);
+
+    const body = mkAL('VERTICAL', { gap: 14, px: 20, pt: 16, pb: 16 });
+    body.resize(480, 1180 - 328 - 84); body.x = 0; body.y = 328; f85.appendChild(body);
+
+    // Promo Banner Carousel #1 (Atas)
+    if (cPromo) {
+      const prTop = cPromo.createInstance();
+      prTop.resize(440, 116);
+      body.appendChild(prTop); prTop.layoutSizingHorizontal = 'FILL';
+    }
+
+    // Carousel Dots Indicator (Active Emerald Pill + 2 Gray Dots)
+    const dots = mkAL('HORIZONTAL', { gap: 6, main: 'CENTER', cross: 'CENTER' });
+    body.appendChild(dots); dots.layoutSizingHorizontal = 'FILL';
+    const d1 = figma.createRectangle(); d1.resize(22, 6); d1.cornerRadius = 3; d1.fills = [solid('#00897B')]; dots.appendChild(d1);
+    const d2 = figma.createRectangle(); d2.resize(6, 6); d2.cornerRadius = 3; d2.fills = [solid('#CBD5E1')]; dots.appendChild(d2);
+    const d3 = figma.createRectangle(); d3.resize(6, 6); d3.cornerRadius = 3; d3.fills = [solid('#CBD5E1')]; dots.appendChild(d3);
+
+    // Uangmu, lebih teratur | Fitur Cerdas >
+    const sr = mkAL('HORIZONTAL', { main: 'SPACE_BETWEEN', cross: 'CENTER', pt: 2 });
+    body.appendChild(sr); sr.layoutSizingHorizontal = 'FILL';
+    sr.appendChild(makeText('Uangmu, lebih teratur', 17, 'ExtraBold', '#0F172A'));
+    sr.appendChild(makeText('Fitur Cerdas  ›', 13, 'Bold', '#00897B'));
+
+    if (cSmart) { const sm = cSmart.createInstance(); body.appendChild(sm); sm.layoutSizingHorizontal = 'FILL'; }
+    if (cPromo) {
+      const prBot = cPromo.createInstance();
+      prBot.resize(440, 130);
+      body.appendChild(prBot); prBot.layoutSizingHorizontal = 'FILL';
+    }
+
+    const nav = makeCustomNav(0); nav.x = 0; nav.y = 1180 - 84; f85.appendChild(nav);
+    stats.rebuiltScreens++;
+  }
+
   figma.notify(
-    'SELESAI 100%! Sync Dinda: ' + stats.syncedReg + ' teks | Layar Dirombak/Baru (incl. 81-84): ' + stats.rebuiltScreens + ' | Quick Actions: ' + stats.quickActionsFixed + ' ikon | Komponen: ' + stats.componentsFixed,
+    'SELESAI 100%! Sync Dinda: ' + stats.syncedReg + ' teks | Layar Dirombak/Baru (incl. 81-85): ' + stats.rebuiltScreens + ' | Quick Actions: ' + stats.quickActionsFixed + ' ikon | Komponen: ' + stats.componentsFixed,
     { timeout: 8000 }
   );
   figma.closePlugin();
