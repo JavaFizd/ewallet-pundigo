@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
@@ -6,6 +7,7 @@ import '../../models/user_model.dart';
 import '../../widgets/common/plus_upgrade_dialog.dart';
 import '../../widgets/common/user_avatar.dart';
 import '../../widgets/profile/photo_picker_modal.dart';
+import '../kyc/kyc_ktp_camera_screen.dart';
 
 /// ============================================================================
 /// HALAMAN INFORMASI AKUN & UBAH DATA DIRI (100% IDENTIK DENGAN FIGMA)
@@ -34,6 +36,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _phoneController;
   late TextEditingController _emailController;
   String? _currentPhotoUrl;
+  String? _currentKtpPhotoUrl;
   bool _isEditingPhone = false;
 
   @override
@@ -44,6 +47,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _phoneController = TextEditingController(text: user.phone);
     _emailController = TextEditingController(text: user.email);
     _currentPhotoUrl = user.photoUrl;
+    _currentKtpPhotoUrl = user.ktpPhotoUrl;
 
     // Perbarui inisial avatar secara real-time saat pengguna mengetik nama baru
     _nameController.addListener(() {
@@ -63,11 +67,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final previewUser = _appState.user.copyWith(
       name: _nameController.text.trim(),
       photoUrl: _currentPhotoUrl,
+      clearPhoto: _currentPhotoUrl == null || _currentPhotoUrl!.isEmpty,
     );
 
     PhotoPickerModal.show(
       context,
       user: previewUser,
+      isKtpMode: false,
       onPhotoSelected: (selectedPhoto) {
         setState(() {
           _currentPhotoUrl = selectedPhoto;
@@ -97,6 +103,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
+  Future<void> _openKtpPhotoPicker() async {
+    final scanned = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => const KycKtpCameraScreen(returnToProfile: true),
+      ),
+    );
+    if (scanned == true && mounted) {
+      setState(() {
+        _currentKtpPhotoUrl = _appState.user.ktpPhotoUrl;
+        _currentPhotoUrl = _appState.user.photoUrl;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Scan e-KTP berhasil! Foto profil otomatis berubah mengikuti foto KTP.'),
+          backgroundColor: AppColors.success,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
   void _saveProfile() {
     final newName = _nameController.text.trim();
     if (newName.isEmpty) {
@@ -115,6 +142,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       email: _emailController.text.trim(),
       photoUrl: _currentPhotoUrl,
       clearPhoto: _currentPhotoUrl == null || _currentPhotoUrl!.isEmpty,
+      ktpPhotoUrl: _currentKtpPhotoUrl,
+      clearKtpPhoto: _currentKtpPhotoUrl == null || _currentKtpPhotoUrl!.isEmpty,
     );
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -138,6 +167,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       initials: liveInitials,
       photoUrl: _currentPhotoUrl,
       clearPhoto: _currentPhotoUrl == null || _currentPhotoUrl!.isEmpty,
+      ktpPhotoUrl: _currentKtpPhotoUrl,
+      clearKtpPhoto: _currentKtpPhotoUrl == null || _currentKtpPhotoUrl!.isEmpty,
     );
 
     return Scaffold(
@@ -631,8 +662,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               // Field 1: NIK
               _buildKtpField(
                 label: 'Nomor Induk Kependudukan (NIK)',
-                value: user.isPlus ? '117101******0002' : 'Wajib Upgrade PundiGo! Plus',
-                icon: Icons.lock_outline_rounded,
+                value: (user.isPlus || previewUser.hasKtpPhoto) ? '1171025805980002' : 'Wajib Upgrade PundiGo! Plus',
+                icon: (user.isPlus || previewUser.hasKtpPhoto) ? Icons.verified_outlined : Icons.lock_outline_rounded,
               ),
 
               const SizedBox(height: 12),
@@ -640,7 +671,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               // Field 2: Tanggal Lahir
               _buildKtpField(
                 label: 'Tanggal Lahir',
-                value: user.isPlus ? '14 Mei 1998' : 'Belum terverifikasi',
+                value: (user.isPlus || previewUser.hasKtpPhoto) ? '14 Mei 1998' : 'Belum terverifikasi',
                 icon: Icons.calendar_today_outlined,
               ),
 
@@ -649,8 +680,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               // Field 3: Jenis Kelamin
               _buildKtpField(
                 label: 'Jenis Kelamin',
-                value: user.isPlus ? 'Perempuan' : 'Belum terverifikasi',
-                icon: Icons.lock_outline_rounded,
+                value: (user.isPlus || previewUser.hasKtpPhoto) ? 'Perempuan' : 'Belum terverifikasi',
+                icon: (user.isPlus || previewUser.hasKtpPhoto) ? Icons.verified_outlined : Icons.lock_outline_rounded,
               ),
 
               const SizedBox(height: 12),
@@ -658,8 +689,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               // Field 4: Alamat Domisili KTP
               _buildKtpField(
                 label: 'Alamat Domisili KTP',
-                value: user.isPlus ? 'Jl. Teuku Nyak Arief No. 45, Banda Aceh' : 'Belum terverifikasi',
+                value: (user.isPlus || previewUser.hasKtpPhoto) ? 'Jl. Teuku Nyak Arief No. 45, Banda Aceh' : 'Belum terverifikasi',
                 icon: Icons.location_on_outlined,
+              ),
+
+              const SizedBox(height: 14),
+
+              // Field 5: Foto / Kartu e-KTP (Sesuai Revisi Dosen)
+              _buildKtpPhotoCard(
+                isPlus: user.isPlus,
+                liveName: liveName,
+                previewUser: previewUser,
               ),
 
               const SizedBox(height: 32),
@@ -713,6 +753,415 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildKtpPortrait(UserModel previewUser, {double width = 66, double height = 84}) {
+    Widget content;
+    if (previewUser.hasKtpPhoto) {
+      final photo = previewUser.ktpPhotoUrl!.trim();
+      if (photo.startsWith('assets/')) {
+        content = Image.asset(photo, width: width, height: height, fit: BoxFit.cover);
+      } else if (photo.startsWith('http://') || photo.startsWith('https://')) {
+        content = Image.network(
+          photo,
+          width: width,
+          height: height,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) => _buildKtpEmptyPortrait(),
+        );
+      } else if (photo.startsWith('data:image') || photo.length > 100) {
+        try {
+          final cleanBase64 = photo.contains(',') ? photo.split(',').last : photo;
+          content = Image.memory(base64Decode(cleanBase64), width: width, height: height, fit: BoxFit.cover);
+        } catch (_) {
+          content = _buildKtpEmptyPortrait();
+        }
+      } else {
+        content = _buildKtpEmptyPortrait();
+      }
+    } else {
+      content = _buildKtpEmptyPortrait();
+    }
+
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE2E8F0),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.white, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.10),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(6),
+        child: content,
+      ),
+    );
+  }
+
+  Widget _buildKtpEmptyPortrait() {
+    return Container(
+      color: const Color(0xFFF1F5F9),
+      child: const Center(
+        child: Icon(Icons.person_rounded, size: 32, color: Color(0xFF94A3B8)),
+      ),
+    );
+  }
+
+  Widget _buildKtpPhotoCard({
+    required bool isPlus,
+    required String liveName,
+    required UserModel previewUser,
+    bool interactive = true,
+  }) {
+    final hasKtpPhoto = previewUser.hasKtpPhoto;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Foto KTP',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF64748B),
+              ),
+            ),
+            Text(
+              hasKtpPhoto ? 'e-KTP Terpasang' : 'Belum Dimasukkan',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: hasKtpPhoto ? const Color(0xFF059669) : const Color(0xFF94A3B8),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        if (!hasKtpPhoto)
+          // TAMPILAN SEBELUM MEMASUKKAN KTP -> TOMBOL MUDAH "MASUKKAN KTP"
+          InkWell(
+            onTap: interactive ? _openKtpPhotoPicker : null,
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFF99F6E4), width: 1.5),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE6FAF5),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(
+                      Icons.credit_card_rounded,
+                      color: Color(0xFF00897B),
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Masukkan Foto e-KTP',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF0F172A),
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    'Unggah e-KTP untuk melengkapi data identitas & memperbarui foto profil otomatis',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11.5,
+                      color: const Color(0xFF64748B),
+                      height: 1.35,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF00A887), Color(0xFF0288D1)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF00A887).withOpacity(0.25),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.document_scanner_rounded, size: 15, color: Colors.white),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Scan & Masukkan KTP',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else
+          // TAMPILAN SESUDAH MEMASUKKAN KTP -> KARTU e-KTP REALISTIS INDONESIA!
+          Column(
+            children: [
+              InkWell(
+                onTap: interactive ? _openKtpPhotoPicker : null,
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFFC5EBF9),
+                        Color(0xFF9ADAF4),
+                        Color(0xFFD6F1FC),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(color: const Color(0xFF38BDF8), width: 1.3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF0284C7).withOpacity(0.16),
+                        blurRadius: 14,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header Resmi e-KTP RI
+                      Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              'PROVINSI ACEH',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w900,
+                                color: const Color(0xFF0F172A),
+                                letterSpacing: 0.8,
+                              ),
+                            ),
+                            Text(
+                              'KOTA BANDA ACEH',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w800,
+                                color: const Color(0xFF0F172A),
+                                letterSpacing: 0.6,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Container(height: 1, color: const Color(0xFF0369A1).withOpacity(0.25)),
+                      const SizedBox(height: 8),
+
+                      // NIK Besar Khas e-KTP
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 74,
+                            child: Text(
+                              'NIK',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w800,
+                                color: const Color(0xFF0F172A),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            ':  1171025805980002',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                              color: const Color(0xFF0F172A),
+                              letterSpacing: 0.9,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+
+                      // Isi Data e-KTP Kiri + Pasfoto Cewek Kanan
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _ktpDataRow('Nama', liveName.toUpperCase(), boldValue: true),
+                                _ktpDataRow('Tempat/Tgl Lahir', 'BANDA ACEH, 14-05-1998'),
+                                _ktpDataRow('Jenis Kelamin', 'PEREMPUAN    Gol. Darah: O'),
+                                _ktpDataRow('Alamat', 'JL. TEUKU NYAK ARIEF NO. 45'),
+                                _ktpDataRow('   RT/RW', '002 / 004'),
+                                _ktpDataRow('   Kel/Desa', 'DARUSSALAM'),
+                                _ktpDataRow('   Kecamatan', 'SYIAH KUALA'),
+                                _ktpDataRow('Agama', 'ISLAM'),
+                                _ktpDataRow('Status Kawin', 'BELUM KAWIN'),
+                                _ktpDataRow('Pekerjaan', 'MAHASISWA'),
+                                _ktpDataRow('Kewarganegaraan', 'WNI'),
+                                _ktpDataRow('Berlaku Hingga', 'SEUMUR HIDUP'),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          // Kolom Pasfoto + Tanggal + Tanda Tangan
+                          Column(
+                            children: [
+                              _buildKtpPortrait(previewUser, width: 72, height: 92),
+                              const SizedBox(height: 4),
+                              Text(
+                                'BANDA ACEH',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 7.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: const Color(0xFF0F172A),
+                                ),
+                              ),
+                              Text(
+                                '18-11-2026',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 7.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF1E293B),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                UserModel.computeInitials(liveName),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  fontStyle: FontStyle.italic,
+                                  color: const Color(0xFF0F172A).withOpacity(0.75),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (interactive) ...[
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.check_circle_rounded, size: 14, color: Color(0xFF059669)),
+                        const SizedBox(width: 5),
+                        Text(
+                          'e-KTP terpasang & foto profil diperbarui',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF059669),
+                          ),
+                        ),
+                      ],
+                    ),
+                    InkWell(
+                      onTap: _openKtpPhotoPicker,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE6FAF5),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFF99F6E4)),
+                        ),
+                        child: Text(
+                          'Scan Ulang KTP',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF00796B),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+      ],
+    );
+  }
+
+  Widget _ktpDataRow(String label, String value, {bool boldValue = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2.2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 84,
+            child: Text(
+              label,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 8.2,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF1E293B),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              ': $value',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 8.4,
+                fontWeight: boldValue ? FontWeight.w800 : FontWeight.w700,
+                color: const Color(0xFF0F172A),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

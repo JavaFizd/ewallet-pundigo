@@ -7,7 +7,12 @@ import 'kyc_face_scan_screen.dart';
 /// 2. KAMERA SCAN KTP (SESUAI FIGMA: Frame.png)
 /// ============================================================================
 class KycKtpCameraScreen extends StatefulWidget {
-  const KycKtpCameraScreen({super.key});
+  final bool returnToProfile;
+
+  const KycKtpCameraScreen({
+    super.key,
+    this.returnToProfile = false,
+  });
 
   @override
   State<KycKtpCameraScreen> createState() => _KycKtpCameraScreenState();
@@ -32,6 +37,8 @@ class _KycKtpCameraScreenState extends State<KycKtpCameraScreen> with SingleTick
   }
 
   void _onCapture() {
+    // Otomatis simpan hasil scan KTP + perbarui Foto Profil dengan foto KTP
+    AppState.instance.completeKtpScan();
     final user = AppState.instance.user;
 
     // Tampilkan modal hasil scan KTP
@@ -57,15 +64,47 @@ class _KycKtpCameraScreenState extends State<KycKtpCameraScreen> with SingleTick
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(height: 18),
-              Container(
-                width: 58,
-                height: 58,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFE6F8F5),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.check_circle_rounded, color: Color(0xFF00A887), size: 36),
+              const SizedBox(height: 16),
+              // Pratinjau pasfoto hasil ekstraksi e-KTP + badge centang
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 66,
+                    height: 82,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFF00A887), width: 2.2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF00A887).withOpacity(0.22),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        'assets/images/profile_dinda.jpg',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: -8,
+                    bottom: -6,
+                    child: Container(
+                      width: 26,
+                      height: 26,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF00A887),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.check_rounded, color: Colors.white, size: 16),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 14),
               Text(
@@ -78,7 +117,7 @@ class _KycKtpCameraScreenState extends State<KycKtpCameraScreen> with SingleTick
               ),
               const SizedBox(height: 6),
               Text(
-                'Data identitas pada e-KTP berhasil terbaca secara otomatis oleh sistem OCR biometrik.',
+                'Data e-KTP terbaca otomatis oleh OCR biometrik dan foto profil akun Anda langsung diperbarui dari pasfoto KTP.',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 12.5,
@@ -86,7 +125,7 @@ class _KycKtpCameraScreenState extends State<KycKtpCameraScreen> with SingleTick
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 16),
 
               // Detail Terbaca
               Container(
@@ -98,16 +137,18 @@ class _KycKtpCameraScreenState extends State<KycKtpCameraScreen> with SingleTick
                 ),
                 child: Column(
                   children: [
-                    _buildDataRow('NIK', '3171025809980002'),
-                    const Divider(height: 16),
+                    _buildDataRow('NIK', '1171025805980002'),
+                    const Divider(height: 14),
                     _buildDataRow('Nama Lengkap', user.name),
-                    const Divider(height: 16),
+                    const Divider(height: 14),
+                    _buildDataRow('Foto Profil', 'Otomatis Sinkron e-KTP', isSuccess: true),
+                    const Divider(height: 14),
                     _buildDataRow('Status e-KTP', 'Asli & Terbaca Jelas', isSuccess: true),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 22),
+              const SizedBox(height: 20),
 
               Row(
                 children: [
@@ -134,9 +175,13 @@ class _KycKtpCameraScreenState extends State<KycKtpCameraScreen> with SingleTick
                     child: InkWell(
                       onTap: () {
                         Navigator.of(ctx).pop();
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const KycFaceScanScreen()),
-                        );
+                        if (widget.returnToProfile) {
+                          Navigator.of(context).pop(true);
+                        } else {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const KycFaceScanScreen()),
+                          );
+                        }
                       },
                       borderRadius: BorderRadius.circular(14),
                       child: Container(
@@ -156,7 +201,7 @@ class _KycKtpCameraScreenState extends State<KycKtpCameraScreen> with SingleTick
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          'Lanjut Scan Wajah ➔',
+                          widget.returnToProfile ? 'Simpan & Kembali ✓' : 'Lanjut Scan Wajah ➔',
                           style: GoogleFonts.plusJakartaSans(
                             color: Colors.white,
                             fontSize: 14,
@@ -168,7 +213,7 @@ class _KycKtpCameraScreenState extends State<KycKtpCameraScreen> with SingleTick
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
             ],
           ),
         );

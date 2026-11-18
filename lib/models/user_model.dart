@@ -12,6 +12,7 @@ class UserModel {
   final String email;
   final String initials;
   final String? photoUrl; // Foto profil pengguna (opsional)
+  final String? ktpPhotoUrl; // Foto khusus untuk kartu e-KTP (terpisah dari foto profil)
   final String accountType; // "Akun Basic" atau "Akun Plus"
   final double saldoUtama;
   final double saldoDompet;
@@ -24,6 +25,7 @@ class UserModel {
     required this.email,
     String? initials,
     this.photoUrl,
+    this.ktpPhotoUrl,
     this.accountType = 'Akun Basic',
     this.saldoUtama = 0,
     this.saldoDompet = 0,
@@ -50,6 +52,7 @@ class UserModel {
 
   bool get isPlus => accountType.toLowerCase().contains('plus');
   bool get hasPhoto => photoUrl != null && photoUrl!.trim().isNotEmpty;
+  bool get hasKtpPhoto => ktpPhotoUrl != null && ktpPhotoUrl!.trim().isNotEmpty;
 
   UserModel copyWith({
     String? id,
@@ -59,6 +62,8 @@ class UserModel {
     String? initials,
     String? photoUrl,
     bool clearPhoto = false,
+    String? ktpPhotoUrl,
+    bool clearKtpPhoto = false,
     String? accountType,
     double? saldoUtama,
     double? saldoDompet,
@@ -71,6 +76,7 @@ class UserModel {
       email: email ?? this.email,
       initials: initials ?? (name != null ? computeInitials(name) : this.initials),
       photoUrl: clearPhoto ? null : (photoUrl ?? this.photoUrl),
+      ktpPhotoUrl: clearKtpPhoto ? null : (ktpPhotoUrl ?? this.ktpPhotoUrl),
       accountType: accountType ?? this.accountType,
       saldoUtama: saldoUtama ?? this.saldoUtama,
       saldoDompet: saldoDompet ?? this.saldoDompet,
@@ -87,6 +93,7 @@ class UserModel {
       'email': email,
       'initials': initials,
       'photoUrl': photoUrl,
+      'ktpPhotoUrl': ktpPhotoUrl,
       'accountType': accountType,
       'saldoUtama': saldoUtama,
       'saldoDompet': saldoDompet,
@@ -104,6 +111,7 @@ class UserModel {
       email: map['email'] ?? '',
       initials: map['initials'] ?? computeInitials(name),
       photoUrl: map['photoUrl'],
+      ktpPhotoUrl: map['ktpPhotoUrl'],
       accountType: map['accountType'] ?? 'Akun Basic',
       saldoUtama: (map['saldoUtama'] ?? 0).toDouble(),
       saldoDompet: (map['saldoDompet'] ?? 0).toDouble(),

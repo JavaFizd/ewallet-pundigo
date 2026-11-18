@@ -14,14 +14,20 @@ import '../../models/user_model.dart';
 class PhotoPickerModal extends StatelessWidget {
   final UserModel user;
   final ValueChanged<String?> onPhotoSelected;
+  final bool isKtpMode;
 
   const PhotoPickerModal({
     super.key,
     required this.user,
     required this.onPhotoSelected,
+    this.isKtpMode = false,
   });
 
   static const List<Map<String, String>> presetAvatars = [
+    {
+      'label': 'Foto Dinda',
+      'url': 'assets/images/profile_dinda.jpg',
+    },
     {
       'label': 'Profesional',
       'url': 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
@@ -48,7 +54,12 @@ class PhotoPickerModal extends StatelessWidget {
     },
   ];
 
-  static Future<void> show(BuildContext context, {required UserModel user, required ValueChanged<String?> onPhotoSelected}) {
+  static Future<void> show(
+    BuildContext context, {
+    required UserModel user,
+    required ValueChanged<String?> onPhotoSelected,
+    bool isKtpMode = false,
+  }) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -56,26 +67,30 @@ class PhotoPickerModal extends StatelessWidget {
       builder: (ctx) => PhotoPickerModal(
         user: user,
         onPhotoSelected: onPhotoSelected,
+        isKtpMode: isKtpMode,
       ),
     );
   }
 
   void _showCustomUrlDialog(BuildContext context) {
-    final controller = TextEditingController(text: user.photoUrl ?? '');
+    final currentUrl = isKtpMode ? (user.ktpPhotoUrl ?? '') : (user.photoUrl ?? '');
+    final controller = TextEditingController(text: currentUrl);
     showDialog(
       context: context,
       builder: (ctx) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: Text(
-            'Tautan Foto Kustom',
+            isKtpMode ? 'Tautan Foto KTP Kustom' : 'Tautan Foto Kustom',
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 18),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Tempelkan tautan (URL) gambar JPG/PNG online untuk foto profil kamu:',
+                isKtpMode
+                    ? 'Tempelkan tautan (URL) gambar JPG/PNG untuk pasfoto kartu e-KTP kamu:'
+                    : 'Tempelkan tautan (URL) gambar JPG/PNG online untuk foto profil kamu:',
                 style: GoogleFonts.plusJakartaSans(fontSize: 13, color: const Color(0xFF64748B)),
               ),
               const SizedBox(height: 14),
@@ -123,6 +138,8 @@ class PhotoPickerModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final initials = UserModel.computeInitials(user.name);
+    final activeUrl = isKtpMode ? user.ktpPhotoUrl : user.photoUrl;
+    final hasActivePhoto = isKtpMode ? user.hasKtpPhoto : user.hasPhoto;
 
     return Container(
       decoration: const BoxDecoration(
@@ -153,13 +170,13 @@ class PhotoPickerModal extends StatelessWidget {
               Container(
                 width: 42,
                 height: 42,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFE6F8F5),
+                decoration: BoxDecoration(
+                  color: isKtpMode ? const Color(0xFFE0F2FE) : const Color(0xFFE6F8F5),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.camera_alt_rounded,
-                  color: Color(0xFF00A887),
+                child: Icon(
+                  isKtpMode ? Icons.badge_rounded : Icons.camera_alt_rounded,
+                  color: isKtpMode ? const Color(0xFF0284C7) : const Color(0xFF00A887),
                   size: 22,
                 ),
               ),
@@ -169,7 +186,7 @@ class PhotoPickerModal extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Pilih Foto Profil',
+                      isKtpMode ? 'Ganti Foto KTP' : 'Pilih Foto Profil',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 17,
                         fontWeight: FontWeight.w800,
@@ -178,7 +195,9 @@ class PhotoPickerModal extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Pilih foto baru atau gunakan inisial nama otomatis',
+                      isKtpMode
+                          ? 'Pilih foto khusus untuk kartu e-KTP (terpisah dari foto profil)'
+                          : 'Pilih foto baru atau gunakan inisial nama otomatis',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 12.5,
                         color: const Color(0xFF64748B),
@@ -192,11 +211,11 @@ class PhotoPickerModal extends StatelessWidget {
 
           const SizedBox(height: 22),
 
-          // Pilihan 1: Kembali ke Inisial Nama Otomatis (Sistem)
+          // Pilihan 1: Kembali ke Inisial / Kosongkan Foto KTP
           InkWell(
             onTap: () {
               Navigator.of(context).pop();
-              onPhotoSelected(null); // Menghapus foto profil -> inisial otomatis
+              onPhotoSelected(null);
             },
             borderRadius: BorderRadius.circular(16),
             child: Container(
@@ -205,8 +224,8 @@ class PhotoPickerModal extends StatelessWidget {
                 color: const Color(0xFFF8FAFC),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: !user.hasPhoto ? const Color(0xFF00BFA5) : const Color(0xFFE2E8F0),
-                  width: !user.hasPhoto ? 1.8 : 1,
+                  color: !hasActivePhoto ? const Color(0xFF00BFA5) : const Color(0xFFE2E8F0),
+                  width: !hasActivePhoto ? 1.8 : 1,
                 ),
               ),
               child: Row(
@@ -214,14 +233,16 @@ class PhotoPickerModal extends StatelessWidget {
                   CircleAvatar(
                     radius: 22,
                     backgroundColor: const Color(0xFFDCE4FD),
-                    child: Text(
-                      initials,
-                      style: GoogleFonts.plusJakartaSans(
-                        color: const Color(0xFF00796B),
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
-                      ),
-                    ),
+                    child: isKtpMode
+                        ? const Icon(Icons.hide_image_outlined, color: Color(0xFF475569), size: 20)
+                        : Text(
+                            initials,
+                            style: GoogleFonts.plusJakartaSans(
+                              color: const Color(0xFF00796B),
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16,
+                            ),
+                          ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -231,7 +252,7 @@ class PhotoPickerModal extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              'Gunakan Inisial Nama Saja',
+                              isKtpMode ? 'Hapus Foto KTP' : 'Gunakan Inisial Nama Saja',
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
@@ -239,26 +260,29 @@ class PhotoPickerModal extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFE6F8F5),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                'OTOMATIS',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w800,
-                                  color: const Color(0xFF00A887),
+                            if (!isKtpMode)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE6F8F5),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  'OTOMATIS',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w800,
+                                    color: const Color(0xFF00A887),
+                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          'Contoh: "${user.name}" otomatis menjadi inisial "$initials"',
+                          isKtpMode
+                              ? 'Kosongkan sementara pasfoto pada kartu e-KTP'
+                              : 'Contoh: "${user.name}" otomatis menjadi inisial "$initials"',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             color: const Color(0xFF64748B),
@@ -267,7 +291,7 @@ class PhotoPickerModal extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (!user.hasPhoto)
+                  if (!hasActivePhoto)
                     const Icon(
                       Icons.check_circle_rounded,
                       color: Color(0xFF00A887),
@@ -280,9 +304,9 @@ class PhotoPickerModal extends StatelessWidget {
 
           const SizedBox(height: 18),
 
-          // Pilihan 2: Koleksi Avatar Siap Pakai
+          // Pilihan 2: Koleksi Foto Siap Pakai
           Text(
-            'Koleksi Foto & Avatar Siap Pakai',
+            isKtpMode ? 'Pilih Foto KTP Siap Pakai' : 'Koleksi Foto & Avatar Siap Pakai',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               fontWeight: FontWeight.w700,
@@ -300,7 +324,8 @@ class PhotoPickerModal extends StatelessWidget {
               itemBuilder: (ctx, index) {
                 final preset = presetAvatars[index];
                 final url = preset['url']!;
-                final isSelected = user.photoUrl == url;
+                final isSelected = activeUrl == url;
+                final label = (isKtpMode && index == 0) ? 'Foto KTP Baru' : preset['label']!;
 
                 return InkWell(
                   onTap: () {
@@ -324,7 +349,9 @@ class PhotoPickerModal extends StatelessWidget {
                             ),
                             child: CircleAvatar(
                               radius: 26,
-                              backgroundImage: NetworkImage(url),
+                              backgroundImage: url.startsWith('assets/')
+                                  ? AssetImage(url) as ImageProvider
+                                  : NetworkImage(url),
                               backgroundColor: const Color(0xFFE2E8F0),
                             ),
                           ),
@@ -349,7 +376,7 @@ class PhotoPickerModal extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        preset['label']!,
+                        label,
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 10.5,
                           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
@@ -382,7 +409,7 @@ class PhotoPickerModal extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Gunakan Tautan Foto Sendiri (URL)',
+                      isKtpMode ? 'Gunakan Tautan Foto KTP Sendiri (URL)' : 'Gunakan Tautan Foto Sendiri (URL)',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,

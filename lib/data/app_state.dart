@@ -97,13 +97,15 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Update profil pengguna (Nama, No HP, Email, dan Foto Profil)
+  // Update profil pengguna (Nama, No HP, Email, Foto Profil, dan Foto KTP secara terpisah)
   void updateUserProfile({
     String? name,
     String? phone,
     String? email,
     String? photoUrl,
     bool clearPhoto = false,
+    String? ktpPhotoUrl,
+    bool clearKtpPhoto = false,
   }) {
     _user = _user.copyWith(
       name: name ?? _user.name,
@@ -111,13 +113,29 @@ class AppState extends ChangeNotifier {
       email: email ?? _user.email,
       photoUrl: clearPhoto ? null : (photoUrl ?? _user.photoUrl),
       clearPhoto: clearPhoto,
+      ktpPhotoUrl: clearKtpPhoto ? null : (ktpPhotoUrl ?? _user.ktpPhotoUrl),
+      clearKtpPhoto: clearKtpPhoto,
+    );
+    notifyListeners();
+  }
+
+  // Simpan hasil Scan KTP -> otomatis menyimpan Foto KTP & memperbarui Foto Profil
+  void completeKtpScan({String ktpAsset = 'assets/images/profile_dinda.jpg'}) {
+    _user = _user.copyWith(
+      ktpPhotoUrl: ktpAsset,
+      photoUrl: ktpAsset,
     );
     notifyListeners();
   }
 
   // Upgrade akun ke PundiGo! Plus
   void upgradeToPlus() {
-    _user = _user.copyWith(accountType: 'Akun Plus');
+    final ktpPhoto = _user.hasKtpPhoto ? _user.ktpPhotoUrl : 'assets/images/profile_dinda.jpg';
+    _user = _user.copyWith(
+      accountType: 'Akun Plus',
+      ktpPhotoUrl: ktpPhoto,
+      photoUrl: _user.hasPhoto ? _user.photoUrl : ktpPhoto,
+    );
     notifyListeners();
   }
 
